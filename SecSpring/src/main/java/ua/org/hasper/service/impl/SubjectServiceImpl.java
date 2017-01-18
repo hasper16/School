@@ -40,4 +40,10 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectRepository.findAll();
     }
 
+    @Override
+    @Transactional
+    public Subject findById(int id){
+        return subjectRepository.findById(id);
+    }
+
 }

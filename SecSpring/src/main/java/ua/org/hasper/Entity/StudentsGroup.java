@@ -30,6 +30,15 @@ public class StudentsGroup {
 
     public StudentsGroup(String name) {
         this.name = name;
+        students.iterator();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -40,14 +49,13 @@ public class StudentsGroup {
         this.name = name;
     }
 
-    @Transactional
     public void addStudent(Student student) {
-        student.setStudentsGroup(this);
         students.add(student);
+        student.setStudentsGroup(this);
     }
 
     public List<Student> getStudents() {
-        return Collections.unmodifiableList(students);
+        return students;
     }
 
 

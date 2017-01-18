@@ -25,6 +25,10 @@ public interface HomeWorkStudentStatusRepository extends JpaRepository<HomeWorkS
                                                   @Param("edt") Calendar edt);
 
     @Query("SELECT u FROM HomeWorkStudentStatus u " +
+            "where u.student=:student")
+    List<HomeWorkStudentStatus> findByStudent(@Param("student") Student student);
+
+    @Query("SELECT u FROM HomeWorkStudentStatus u " +
             "where u.id=:id")
     HomeWorkStudentStatus findById(@Param("id") int id);
 

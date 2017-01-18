@@ -3,9 +3,7 @@ package ua.org.hasper.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.org.hasper.Entity.HomeWork;
-import ua.org.hasper.Entity.Student;
-import ua.org.hasper.Entity.StudentsGroup;
+import ua.org.hasper.Entity.*;
 import ua.org.hasper.repository.HomeWorkRepository;
 import ua.org.hasper.service.HomeWorkService;
 
@@ -35,38 +33,43 @@ public class HomeWorkServiceImpl implements HomeWorkService {
     @Override
     @Transactional
     public List<HomeWork> findByStudentDate(Student student,
-                                          Calendar sdt,
-                                          Calendar edt) {
+                                            Calendar sdt,
+                                            Calendar edt) {
         return homeWorkRepository.findByStudentDate(student, sdt, edt);
     }
 
-    /*@Override
+    @Override
     @Transactional
-    public List<HomeWork> findByGroupSubjectStatusDate(StudentsGroup studentsGroup,
-                                                       Subject subject,
-                                                       HomeWorkStatus homeWorkStatus,
-                                                       Calendar sdt,
-                                                       Calendar edt) {
-        return homeWorkRepository.findByGroupSubjectStatusDate(studentsGroup, subject, homeWorkStatus, sdt, edt);
+    public List<HomeWork> findByTeacher(Teacher teacher) {
+        return homeWorkRepository.findByTeacher(teacher);
     }
 
     @Override
     @Transactional
-    public List<HomeWork> findByGroupSubjectDate(StudentsGroup studentsGroup,
-                                                 Subject subject,
-                                                 Calendar sdt,
-                                                 Calendar edt) {
-        return homeWorkRepository.findByGroupSubjectDate(studentsGroup, subject, sdt, edt);
+    public List<HomeWork> findByGroup(StudentsGroup studentsGroup) {
+        return homeWorkRepository.findByGroup(studentsGroup);
     }
 
     @Override
     @Transactional
-    public List<HomeWork> findByGroupStatusDate(StudentsGroup studentsGroup,
-                                                HomeWorkStatus homeWorkStatus,
-                                                Calendar sdt,
-                                                Calendar edt) {
-        return homeWorkRepository.findByGroupStatusDate(studentsGroup, homeWorkStatus, sdt, edt);
-    }*/
+    public List<HomeWork> findBySubject(Subject subject) {
+        return homeWorkRepository.findBySubject(subject);
+
+    }
+
+    @Override
+    @Transactional
+    public List<HomeWork> findAll (){
+        return homeWorkRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public HomeWork findById(int id){
+        return homeWorkRepository.findById(id);
+    }
+
+
 
 
 }

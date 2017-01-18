@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.hasper.Entity.Enums.HomeWorkStatus;
-import ua.org.hasper.Entity.HomeWork;
 import ua.org.hasper.Entity.HomeWorkStudentStatus;
 import ua.org.hasper.Entity.Student;
 import ua.org.hasper.Entity.Subject;
@@ -79,6 +78,24 @@ public class HomeWorkStudentStatusImpl implements HomeWorkStudentStatusService {
                                                                       Calendar edt) {
         return homeWorkStudentStatusRepository.findByStudentSubjectStatusDate(student, subject, homeWorkStatus, sdt, edt);
     }
+
+    @Override
+    @Transactional
+    public List<HomeWorkStudentStatus> findByStudent(Student student){
+        return homeWorkStudentStatusRepository.findByStudent(student);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByStudent(Student student){
+
+        List<HomeWorkStudentStatus>homeWorkStudentStatuses = homeWorkStudentStatusRepository.findByStudent(student);
+        for (HomeWorkStudentStatus h:homeWorkStudentStatuses) {
+            homeWorkStudentStatusRepository.delete(h);
+        }
+
+    }
+
 
 
 }

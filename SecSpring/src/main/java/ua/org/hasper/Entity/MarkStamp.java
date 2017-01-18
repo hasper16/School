@@ -4,6 +4,8 @@ import ua.org.hasper.Entity.Enums.Mark;
 import ua.org.hasper.Entity.Enums.MarkType;
 
 import javax.persistence.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -46,6 +48,15 @@ public class MarkStamp {
         return createDate;
     }
 
+    public String getDateHtml(){
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(createDate.getTime());
+    }
+    public String getDateString(){
+        DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        return format.format(createDate.getTime());
+    }
+
     public void setDate(Calendar date) {
         this.createDate = date;
     }
@@ -73,6 +84,14 @@ public class MarkStamp {
     public void setJurnal(Jurnal jurnal) {
         this.jurnal = jurnal;
         jurnal.addMarkStamp(this);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
 

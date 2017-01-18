@@ -7,7 +7,6 @@ import ua.org.hasper.Entity.StudentsGroup;
 import ua.org.hasper.repository.GroupRepository;
 import ua.org.hasper.service.GroupService;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -48,5 +47,17 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public List<StudentsGroup> allGroupsWithout(String name){
         return groupRepository.allGroupsWithout(name);
+    }
+
+    @Override
+    @Transactional
+    public StudentsGroup getGroupById (int id){
+        return groupRepository.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public void delGroup(StudentsGroup studentsGroup){
+        groupRepository.delete(studentsGroup);
     }
 }

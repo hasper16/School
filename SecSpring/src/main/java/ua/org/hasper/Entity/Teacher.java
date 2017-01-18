@@ -1,11 +1,9 @@
 package ua.org.hasper.Entity;
 
 import javax.persistence.*;
-import javax.security.auth.Subject;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -23,7 +21,7 @@ public class Teacher {
         private String surname;
 
         private Calendar birthday;
-        private int phone;
+        private long phone;
         private String email;
 
         @OneToOne
@@ -33,7 +31,7 @@ public class Teacher {
         public Teacher() {
         }
 
-    public Teacher(String name, String surname, Calendar birthday, int phone, String email, CustomUser user) {
+    public Teacher(String name, String surname, Calendar birthday, long phone, String email, CustomUser user) {
         this.name = name;
         this.surname = surname;
         this.birthday = birthday;
@@ -41,6 +39,14 @@ public class Teacher {
         this.email = email;
         this.user = user;
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -63,15 +69,25 @@ public class Teacher {
         return birthday;
     }
 
+    public String getBirthdayString(){
+        DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        return format.format(birthday.getTime());
+    }
+
+    public String getBirthdayHtml(){
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(birthday.getTime());
+    }
+
     public void setBirthday(Calendar birthday) {
         this.birthday = birthday;
     }
 
-    public int getPhone() {
+    public long getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(long phone) {
         this.phone = phone;
     }
 

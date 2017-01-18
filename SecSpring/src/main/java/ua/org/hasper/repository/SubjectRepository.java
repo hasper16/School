@@ -11,4 +11,7 @@ import ua.org.hasper.Entity.Subject;
 public interface SubjectRepository extends JpaRepository<Subject,Long> {
     @Query("SELECT u FROM Subject u where u.name = :subname")
     Subject findByName (@Param("subname") String subname);
+
+    @Query("SELECT u FROM Subject u where u.id = :id")
+    Subject findById (@Param("id") int id);
 }

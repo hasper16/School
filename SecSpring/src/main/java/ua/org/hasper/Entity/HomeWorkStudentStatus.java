@@ -18,7 +18,7 @@ public class HomeWorkStudentStatus {
     @GeneratedValue
     private int id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "student_id")
     private Student student;
 

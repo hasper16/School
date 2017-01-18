@@ -11,5 +11,6 @@ public interface SubjectService {
     void addOrUpdateSubject(Subject subject);
     void delSubject(Subject subject);
     Subject findByName(String subname);
+    Subject findById(int id);
     List<Subject> getAllSubjects();
 }

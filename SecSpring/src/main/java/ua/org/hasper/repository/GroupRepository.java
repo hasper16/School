@@ -13,6 +13,8 @@ import java.util.List;
 public interface GroupRepository extends JpaRepository<StudentsGroup,Long>{
     @Query("SELECT u FROM StudentsGroup u where u.name = :name")
     StudentsGroup findByName (@Param("name") String name);
+    @Query("SELECT u FROM StudentsGroup u where u.id = :id")
+    StudentsGroup findById (@Param("id") int id);
     @Query("SELECT u FROM StudentsGroup u where u.name <> :name")
     List<StudentsGroup> allGroupsWithout (@Param("name") String name);
 }

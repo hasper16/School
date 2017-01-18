@@ -15,13 +15,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shool</title>
 
-    <style>
-        <%@include file='css/bootstrap.css' %>
-        <%@include file='css/assets/ie10-viewport-bug-workaround.css' %>
-        <%@include file='css/jumbotron.css' %>
-        <%@include file='css/footer.css' %>
-    </style>
-
+    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="/css/assets/ie10-viewport-bug-workaround.css" type="text/css" />
+    <link rel="stylesheet" href="/css/jumbotron.css" type="text/css" />
+    <link rel="stylesheet" href="/css/footer.css" type="text/css" />
 
 </head>
 

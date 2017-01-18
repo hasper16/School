@@ -84,4 +84,12 @@ public class Schedule {
     public void setScheduleTimes(ScheduleTimes scheduleTimes) {
         this.scheduleTimes = scheduleTimes;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

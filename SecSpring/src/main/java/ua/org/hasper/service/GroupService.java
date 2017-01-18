@@ -10,8 +10,10 @@ import java.util.List;
  */
 public interface GroupService {
     StudentsGroup getGroupByName(String name);
+    StudentsGroup getGroupById (int id);
     StudentsGroup editGroup(StudentsGroup studentsGroup);
     void addGroup(StudentsGroup studentsGroup);
     List<StudentsGroup> getAllGroups();
     List<StudentsGroup> allGroupsWithout(String name);
+    void delGroup(StudentsGroup studentsGroup);
 }

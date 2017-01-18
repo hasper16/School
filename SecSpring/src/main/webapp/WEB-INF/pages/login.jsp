@@ -11,10 +11,12 @@
     <title>Login School</title>
 
     <!-- Bootstrap core CSS -->
+
+
     <style>
-        <%@include file='css/bootstrap.css' %>
-        <%@include file='css/assets/ie10-viewport-bug-workaround.css' %>
-        <%@include file='css/signin.css' %>
+        <%@include file='/css/bootstrap.css' %>
+        <%@include file='/css/assets/ie10-viewport-bug-workaround.css' %>
+        <%@include file='/css/signin.css' %>
     </style>
     <!-- <link href="css/bootstrap.css" rel="stylesheet">
 

@@ -7,6 +7,8 @@ import ua.org.hasper.Entity.ScheduleTimes;
 import ua.org.hasper.repository.ScheduleTimesRepository;
 import ua.org.hasper.service.ScheduleTimesService;
 
+import java.util.List;
+
 /**
  * Created by Pavel.Eremenko on 02.09.2016.
  */
@@ -35,6 +37,18 @@ public class ScheduleTimesServiceImpl implements ScheduleTimesService {
         ScheduleTimes scheduleTimes = scheduleTimesRepository.findByLessonNum(n);
         scheduleTimes.getSchedules().iterator();
         return scheduleTimes;
+    }
+
+    @Override
+    @Transactional
+    public List<ScheduleTimes> getAll(){
+        return scheduleTimesRepository.getAll();
+    }
+
+    @Override
+    @Transactional
+    public ScheduleTimes findById(int id){
+        return scheduleTimesRepository.findById(id);
     }
 
 }

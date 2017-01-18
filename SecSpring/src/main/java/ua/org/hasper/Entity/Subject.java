@@ -41,6 +41,14 @@ public class Subject implements Comparable<Subject> {
         }
         return res;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }
 
 

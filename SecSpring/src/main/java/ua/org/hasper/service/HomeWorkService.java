@@ -1,8 +1,6 @@
 package ua.org.hasper.service;
 
-import ua.org.hasper.Entity.HomeWork;
-import ua.org.hasper.Entity.Student;
-import ua.org.hasper.Entity.StudentsGroup;
+import ua.org.hasper.Entity.*;
 
 import java.util.Calendar;
 import java.util.List;
@@ -16,17 +14,9 @@ public interface HomeWorkService {
     List<HomeWork> findByStudentDate (Student student,
                                     Calendar sdt,
                                     Calendar edt);
-   /* List<HomeWork> findByGroupSubjectStatusDate (StudentsGroup studentsGroup,
-                                                 Subject subject,
-                                                 HomeWorkStatus homeWorkStatus,
-                                                 Calendar sdt,
-                                                 Calendar edt);
-    List<HomeWork> findByGroupSubjectDate (StudentsGroup studentsGroup,
-                                           Subject subject,
-                                           Calendar sdt,
-                                           Calendar edt);
-    List<HomeWork> findByGroupStatusDate (StudentsGroup studentsGroup,
-                                          HomeWorkStatus homeWorkStatus,
-                                          Calendar sdt,
-                                          Calendar edt);*/
+    List<HomeWork> findByTeacher(Teacher teacher);
+    List<HomeWork> findByGroup (StudentsGroup studentsGroup);
+    List<HomeWork> findBySubject (Subject subject);
+    List<HomeWork> findAll ();
+    HomeWork findById(int id);
 }

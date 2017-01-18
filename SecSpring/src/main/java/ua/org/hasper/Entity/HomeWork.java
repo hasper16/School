@@ -107,4 +107,12 @@ public class HomeWork {
     public void setHomeWorkStudentStatuses(List<HomeWorkStudentStatus> homeWorkStudentStatuses) {
         this.homeWorkStudentStatuses = homeWorkStudentStatuses;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

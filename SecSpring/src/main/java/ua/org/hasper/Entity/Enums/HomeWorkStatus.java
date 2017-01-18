@@ -22,7 +22,7 @@ public enum HomeWorkStatus {
     public String toString(){
         return name;
     }
-    public String gettableClassName(){return tableClassName;}
+    public String getTableClassName(){return tableClassName;}
 
 
 }

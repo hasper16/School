@@ -7,6 +7,8 @@ import ua.org.hasper.Entity.Teacher;
 import ua.org.hasper.repository.TeacherRepository;
 import ua.org.hasper.service.TeacherService;
 
+import java.util.List;
+
 /**
  * Created by Pavel.Eremenko on 29.08.2016.
  */
@@ -31,5 +33,17 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional
     public Teacher findByLogin(String login){
         return teacherRepository.findByUser(login);
+    }
+
+    @Override
+    @Transactional
+    public List<Teacher> getAllTeachers(){
+        return teacherRepository.allTeachers();
+    }
+
+    @Override
+    @Transactional
+    public Teacher findById(int id){
+        return teacherRepository.findById(id);
     }
 }

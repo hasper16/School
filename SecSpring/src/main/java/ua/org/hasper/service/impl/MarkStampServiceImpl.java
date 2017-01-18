@@ -7,6 +7,8 @@ import ua.org.hasper.Entity.MarkStamp;
 import ua.org.hasper.repository.MarkStampRepository;
 import ua.org.hasper.service.MarkStampService;
 
+import java.util.List;
+
 /**
  * Created by Pavel.Eremenko on 29.09.2016.
  */
@@ -24,5 +26,15 @@ public class MarkStampServiceImpl implements MarkStampService {
     @Transactional
     public void delMarkStamp(MarkStamp markStamp){
         markStampRepository.delete(markStamp);
+    }
+    @Override
+    @Transactional
+    public MarkStamp findById(int id){
+        return markStampRepository.findById(id);
+    }
+    @Override
+    @Transactional
+    public List<MarkStamp> findByAll(){
+        return markStampRepository.findAll();
     }
 }

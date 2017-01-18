@@ -3,8 +3,7 @@ package ua.org.hasper.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.org.hasper.Entity.Jurnal;
-import ua.org.hasper.Entity.Subject;
+import ua.org.hasper.Entity.*;
 import ua.org.hasper.repository.JurnalRepository;
 import ua.org.hasper.service.JurnalService;
 
@@ -42,6 +41,7 @@ public class JurnalServiceImpl implements JurnalService {
     }
 
     @Override
+    @Transactional
     public Map<Subject,Jurnal> findByLoginForMap(String login, Calendar sdt, Calendar edt){
 
         List<Jurnal> jurnals = findByLogin(login,sdt,edt);
@@ -52,5 +52,35 @@ public class JurnalServiceImpl implements JurnalService {
         }
         return subjectJurnalMap;
 
+    }
+
+    @Override
+    @Transactional
+    public List<Jurnal> findByTeacher (Teacher teacher){
+        return jurnalRepository.findByTeacher(teacher);
+    }
+
+    @Override
+    @Transactional
+    public List<Jurnal> findByStudent (Student student){
+        return jurnalRepository.findByStudent(student);
+    }
+
+    @Override
+    @Transactional
+    public List<Jurnal> findByGroup (StudentsGroup studentsGroup){
+        return jurnalRepository.findByGroup(studentsGroup);
+    }
+
+    @Override
+    @Transactional
+    public List<Jurnal> findBySubject (Subject subject){
+        return jurnalRepository.findBySubject(subject);
+    }
+
+    @Override
+    @Transactional
+    public List<Jurnal> getAllJurnals (){
+        return jurnalRepository.findAll();
     }
 }

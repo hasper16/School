@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -42,6 +41,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Value("${hibernate.dialect}")
     private String sqlDialect;
+
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory
@@ -83,6 +83,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/pages/**").addResourceLocations("/pages/");
+        registry.addResourceHandler("/images/**").addResourceLocations("/images/");
+        registry.addResourceHandler("/js/**").addResourceLocations("/js/");
+        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+        registry.addResourceHandler("/fonts/**").addResourceLocations("/fonts/");
+
     }
 
     @Bean
@@ -106,4 +111,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
         return properties;
     }
+
+
 }

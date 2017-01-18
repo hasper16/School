@@ -1,11 +1,14 @@
 package ua.org.hasper.service.impl;
 
+import org.hibernate.annotations.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.hasper.Entity.Enums.WeekDayName;
 import ua.org.hasper.Entity.Schedule;
 import ua.org.hasper.Entity.StudentsGroup;
+import ua.org.hasper.Entity.Subject;
+import ua.org.hasper.Entity.Teacher;
 import ua.org.hasper.repository.ScheduleRepository;
 import ua.org.hasper.service.ScheduleService;
 
@@ -40,5 +43,35 @@ scheduleRepository.delete(schedule);
     @Transactional
     public List<Schedule> findByWeekDayNameNGroup (WeekDayName weekDayName, StudentsGroup studentsGroup){
         return  scheduleRepository.findByWeekDayNameNGroup(weekDayName, studentsGroup);
+    }
+
+    @Override
+    @Transactional
+    public List<Schedule> findByTeacher (Teacher teacher){
+        return scheduleRepository.findByTeacher(teacher);
+    }
+
+    @Override
+    @Transactional
+    public List<Schedule> findByGroup (StudentsGroup studentsGroup){
+        return scheduleRepository.findByGroup(studentsGroup);
+    }
+
+    @Override
+    @Transactional
+    public List<Schedule> findBySubject (Subject subject){
+        return scheduleRepository.findBySubject(subject);
+    }
+
+    @Override
+    @Transactional
+    public Schedule findById(int id){
+        return scheduleRepository.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public List<Schedule> findAll (){
+        return scheduleRepository.findAll();
     }
 }

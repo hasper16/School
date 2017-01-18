@@ -19,6 +19,8 @@ public interface HomeWorkStudentStatusService {
     void saveOrUpdateHomeWorkStudentStatus(HomeWorkStudentStatus homeWorkStudentStatus);
     void delHomeWorkStudentStatus(HomeWorkStudentStatus homeWorkStudentStatus);
     HomeWorkStudentStatus findById (int id);
+    List<HomeWorkStudentStatus> findByStudent (Student student);
+    void deleteByStudent (Student student);
 
    List<HomeWorkStudentStatus> findByStudentSubjectDate (Student student,
                                                    Subject subject,

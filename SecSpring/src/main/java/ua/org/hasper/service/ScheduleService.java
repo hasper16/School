@@ -3,6 +3,8 @@ package ua.org.hasper.service;
 import ua.org.hasper.Entity.Enums.WeekDayName;
 import ua.org.hasper.Entity.Schedule;
 import ua.org.hasper.Entity.StudentsGroup;
+import ua.org.hasper.Entity.Subject;
+import ua.org.hasper.Entity.Teacher;
 
 import java.util.List;
 
@@ -14,4 +16,9 @@ public interface ScheduleService {
     void delSchedule(Schedule schedule);
     List<Schedule> findByWeekDayName (WeekDayName weekDayName);
     List<Schedule> findByWeekDayNameNGroup (WeekDayName weekDayName, StudentsGroup studentsGroup);
+    List<Schedule> findByTeacher (Teacher teacher);
+    List<Schedule> findByGroup (StudentsGroup studentsGroup);
+    List<Schedule> findBySubject (Subject subject);
+    List<Schedule> findAll ();
+    Schedule findById(int id);
 }

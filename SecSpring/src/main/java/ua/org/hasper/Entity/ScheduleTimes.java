@@ -39,7 +39,7 @@ public class ScheduleTimes {
 
     public void addSchedule(Schedule schedule){
         schedule.setScheduleTimes(this);
-        this.schedules.add(schedule);
+        //this.schedules.add(schedule);
 
     }
 
@@ -71,5 +71,13 @@ public class ScheduleTimes {
 
     public void setSchedules(LinkedList<Schedule> schedules) {
         this.schedules = schedules;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

@@ -12,17 +12,14 @@
     <meta charset="utf-8"/>
     <title>Учительская</title>
 
-    <style>
-        <%@include file='css/layout.css' %>
-        <%@include file='css/ie.css' %>
-    </style>
+    <link rel="stylesheet" href="/css/layout.css" type="text/css" media="screen" />
 
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <script src="js/jquery-1.5.2.min.js" type="text/javascript"></script>
-    <script src="js/hideshow.js" type="text/javascript"></script>
-    <script src="js/jquery.tablesorter.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="js/jquery.equalHeight.js"></script>
+    <script src="/js/jquery-1.5.2.min.js" type="text/javascript"></script>
+    <script src="/js/hideshow.js" type="text/javascript"></script>
+    <script src="/js/jquery.tablesorter.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/jquery.equalHeight.js"></script>
     <script type="text/javascript">
         $(document).ready(function()
                 {
@@ -63,15 +60,15 @@
 
 <header id="header">
     <hgroup>
-        <h1 class="site_title"><a href="index.html">Учительская</a></h1>
-        <h2 class="section_title">School</h2><div class="btn_view_site"><a href="../">Открыть сайт</a></div>
+        <h1 class="site_title"><a href="/admin/">Учительская</a></h1>
+        <h2 class="section_title">School</h2><div class="btn_view_site"><a href="/">Открыть сайт</a></div>
     </hgroup>
 </header> <!-- end of header bar -->
 
 <section id="secondary_bar">
     <div class="user">
         <p>${login}</p>
-        <a class="logout_user" href="#" title="Logout">Logout</a>
+        <a class="logout_user" href="/logout"  title="Logout">Logout</a>
     </div>
     <!--<div class="breadcrumbs_container">
         <article class="breadcrumbs"><a href="./index.html">Учительская</a> <div class="breadcrumb_divider"></div> <a class="current">Dashboard</a></article>
@@ -82,33 +79,33 @@
 
     <h3>Расписание занятий</h3>
     <ul class="toggle">
-        <li class="icn_new_article active"><a href="./timetables/newTimeTable.html">Новое расписание</a></li>
-        <li class="icn_categories"><a href="./timetables/allTimeTable.html">Все расписания</a></li>
-        <li class="icn_new_article"><a href="./timetables/newSubject.html">Новый предмет</a></li>
-        <li class="icn_categories"><a href="./timetables/subjectsList.html">Все предметы</a></li>
-        <li class="icn_new_article"><a href="./timetables/newGroup.html">Новый класс</a></li>
-        <li class="icn_categories"><a href=./timetables/groupsList.html>Все классы</a></li>
+        <li class="icn_new_article active"><a href="/admin/timetable/add">Новое расписание</a></li>
+        <li class="icn_categories"><a href="/admin/timetable/list">Все расписания</a></li>
+        <li class="icn_new_article"><a href="/admin/subjects/add">Новый предмет</a></li>
+        <li class="icn_categories"><a href="/admin/subjects/list">Все предметы</a></li>
+        <li class="icn_new_article"><a href="/admin/groups/add">Новый класс</a></li>
+        <li class="icn_categories"><a href="/admin/groups/list">Все классы</a></li>
     </ul>
     <h3>Пользователи</h3>
     <ul class="toggle">
-        <li class="icn_add_user"><a href="./Users/addUser.html">Добавить нового пользователя</a></li>
-        <li class="icn_view_users"><a href="./Users/UserList.html">Список пользователей</a></li>
+        <li class="icn_add_user"><a href="/admin/users/add">Добавить нового пользователя</a></li>
+        <li class="icn_view_users"><a href="/admin/users/list">Список пользователей</a></li>
     </ul>
     <h3>Домашние задания</h3>
     <ul class="toggle">
-        <li class="icn_new_article"><a href="./homeworks/newHomeWork.html">Новое задание</a></li>
-        <li class="icn_categories"><a href="./homeworks/allHomeWorks.html">Все задания</a></li>
+        <li class="icn_new_article"><a href="/admin/homeworks/add">Новое задание</a></li>
+        <li class="icn_categories"><a href="/admin/homeworks/list">Все задания</a></li>
     </ul>
     <h3>Журнал оценок и посещений</h3>
     <ul class="toggle">
-        <li class="icn_new_article"><a href="./Journal/newMark.html">Новая оценка</a></li>
-        <li class="icn_folder"><a href="./Journal/Journal.html">Журнал</a></li>
+        <li class="icn_new_article"><a href="/admin/journal/addMark">Новая оценка</a></li>
+        <li class="icn_folder"><a href="/admin/journal/journalList">Журнал</a></li>
     </ul>
     <h3>Отчеты</h3>
     <ul class="toggle">
-        <li class="icn_categories"><a href="./reports/progress.html">Успеваемость</a></li>
-        <li class="icn_categories"><a href="./reports/visits.html">Посещения</a></li>
-        <li class="icn_categories"><a href="./reports/studentsRating.html">Рейтинг учеников</a></li>
+        <li class="icn_categories"><a href="/admin/reports/progress">Успеваемость</a></li>
+        <li class="icn_categories"><a href="/admin/reports/visits">Посещения</a></li>
+        <li class="icn_categories"><a href="/admin/reports/studentsRating">Рейтинг учеников</a></li>
     </ul>
     <h3>Admin</h3>
     <ul class="toggle">
@@ -176,98 +173,20 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Lorem Ipsum Dolor Sit Amet</td>
-                        <td>Articles</td>
-                        <td>5th April 2011</td>
-                        <td><input type="image" src="/WEB-INF/pages/admin/images/icn_edit.png" title="Edit"><input type="image" src="\images\icn_trash.png" title="Trash"></td>
-
-
-                    </tr>
-                    <tr>
+                     <tr>
                         <td><input type="checkbox"></td>
                         <td>Ipsum Lorem Dolor Sit Amet</td>
                         <td>Freebies</td>
                         <td>6th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
+                        <td><input type="image" src="/images/icn_edit.png" title="Edit"><input type="image" src="/images/icn_trash.png" title="Trash"></td>
                     </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Sit Amet Dolor Ipsum</td>
-                        <td>Tutorials</td>
-                        <td>10th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Dolor Lorem Amet</td>
-                        <td>Articles</td>
-                        <td>16th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Dolor Lorem Amet</td>
-                        <td>Articles</td>
-                        <td>16th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
+
                     </tbody>
                 </table>
             </div><!-- end of #tab1 -->
 
-            <div id="tab2" class="tab_content">
-                <table class="tablesorter" cellspacing="0">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>Comment</th>
-                        <th>Posted by</th>
-                        <th>Posted On</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Lorem Ipsum Dolor Sit Amet</td>
-                        <td>Mark Corrigan</td>
-                        <td>5th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Ipsum Lorem Dolor Sit Amet</td>
-                        <td>Jeremy Usbourne</td>
-                        <td>6th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Sit Amet Dolor Ipsum</td>
-                        <td>Super Hans</td>
-                        <td>10th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Dolor Lorem Amet</td>
-                        <td>Alan Johnson</td>
-                        <td>16th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>Dolor Lorem Amet</td>
-                        <td>Dobby</td>
-                        <td>16th April 2011</td>
-                        <td><input type="image" src="images/icn_edit.png" title="Edit"><input type="image" src="images/icn_trash.png" title="Trash"></td>
-                    </tr>
-                    </tbody>
-                </table>
 
-            </div><!-- end of #tab2 -->
+
 
         </div><!-- end of .tab_container -->
 
