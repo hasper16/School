@@ -1,6 +1,7 @@
 package ua.org.hasper.Controllers.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,16 +21,21 @@ import java.util.List;
 @Controller
 public class GroupsController {
     @Autowired
-    GroupService groupService;
+    private GroupService groupService;
     @Autowired
-    HomeWorkService homeWorkService;
+    private HomeWorkService homeWorkService;
     @Autowired
-    JurnalService jurnalService;
+    private JurnalService jurnalService;
     @Autowired
-    ScheduleService scheduleService;
+    private ScheduleService scheduleService;
     @Autowired
-    StudentService studentService;
+    private StudentService studentService;
+    @Autowired
+    private HomeWorkStudentStatusService homeWorkStudentStatusService;
 
+    List<StudentsGroup> studentsGroups;
+    int PAGESIZE = 25;
+    int curPage = 0;
 
     @RequestMapping("admin/groups/add")
     public ModelAndView add(Model model) {
@@ -41,102 +47,121 @@ public class GroupsController {
 
     @RequestMapping(value = "admin/groups/add", method = RequestMethod.POST)
     public ModelAndView newGroup(@RequestParam(value = "j_group") String group,
-                                 Model model)  {
-        StudentsGroup studentsGroup = new StudentsGroup(group);
-        groupService.addGroup(studentsGroup);
+                                 Model model) {
+        String message = "";
+        int alert = 0;
+        try {
+            List<StudentsGroup> studentsGroupDublicat = groupService.getGroupByName(group);
+            if (studentsGroupDublicat.size() > 0) {
+                alert = 2;
+                message = "Группа с таким названием уже существует";
+            } else {
+                StudentsGroup studentsGroup = new StudentsGroup(group);
+                groupService.addGroup(studentsGroup);
+                alert = 1;
+                message = "Группа " + studentsGroup.getName() + " успешно добавленна";
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
+        model.addAttribute("alert", alert);
+        model.addAttribute("message", message);
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
-        model.addAttribute("addStatus", 1);
 
         return new ModelAndView("admin/groups/add");
     }
 
     @RequestMapping("admin/groups/list")
-    public void list(Model model) {
+    public ModelAndView list(Model model) {
+        return listFilter(0, model);
+    }
+
+    @RequestMapping(value = "admin/groups/list", params = {"page"})
+    public ModelAndView listFilter(@RequestParam(value = "page") int page,
+                                   Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
 
-        List<StudentsGroup> studentsGroups = groupService.getAllGroups();
+        Page<StudentsGroup> groupPage = groupService.getAllGroups(page, PAGESIZE);
+        studentsGroups = groupPage.getContent();
+        curPage = page;
+        int totalPages = groupPage.getTotalPages() - 1;
 
+        model.addAttribute("groups", studentsGroups);
+        model.addAttribute("curPage", curPage);
+        model.addAttribute("totalPages", totalPages);
 
-        model.addAttribute("groups",studentsGroups);
-
+        return new ModelAndView("admin/groups/list");
     }
 
     @RequestMapping("/groups/delete")
-    public ModelAndView deleteGroup(@RequestParam(value="id") int id, Model model) {
+    public ModelAndView deleteGroup(@RequestParam(value = "id") int id, Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
 
 
-        String message ;
         StudentsGroup studentsGroup = groupService.getGroupById(id);
-        List<HomeWork>homeWorks = homeWorkService.findByGroup(studentsGroup);
-        List<Jurnal>jurnals=jurnalService.findByGroup(studentsGroup);
-        List<Schedule>schedules=scheduleService.findByGroup(studentsGroup);
-        List<Student>students=studentService.getStudentByGroup(studentsGroup);
+        int alert = 0;
+        String message;
+        message = studentsGroup.getName();
+        try {
 
-        for (HomeWork h:
-             homeWorks) {
-            h.setStudentsGroup(null);
-            homeWorkService.addOrUpdateHomeWork(h);
+            groupService.delGroup(studentsGroup);
+
+            alert = 1;
+            message = "Группа " + studentsGroup.getName() + " успешно удалена";
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
         }
 
-        for (Jurnal j:
-             jurnals) {
-            j.setStudentsGroup(null);
-            jurnalService.addOrUpdateJurnal(j);
-        }
-
-        for (Schedule s:
-             schedules) {
-            s.setStudentsGroup(null);
-            scheduleService.addOrUpdateSchedule(s);
-        }
-
-        for (Student s:
-             students) {
-            s.setStudentsGroup(null);
-            studentService.addStudent(s);
-        }
+        model.addAttribute("alert", alert);
+        model.addAttribute("message", message);
 
 
-        message=studentsGroup.getName();
-        groupService.delGroup(studentsGroup);
-
-        List<StudentsGroup> studentsGroups = groupService.getAllGroups();
-        model.addAttribute("groups",studentsGroups);
-
-
-        model.addAttribute("message",message);
-        model.addAttribute("alert",1);
-
-        return new ModelAndView("admin/groups/list");
-
+        return listFilter(curPage, model);
     }
 
 
     @RequestMapping("/groups/edit")
-    public ModelAndView editGroup(@RequestParam(value="id") int id,
-                                    @RequestParam(value = "j_group") String group,
-                                    Model model)  {
-        StudentsGroup studentsGroup=groupService.getGroupById(id);
-        studentsGroup.setName(group);
+    public ModelAndView editGroup(@RequestParam(value = "id") int id,
+                                  @RequestParam(value = "j_group") String group,
+                                  Model model) {
+        String message = "";
+        int alert = 0;
+        try {
+            StudentsGroup studentsGroup = groupService.getGroupById(id);
+            List<StudentsGroup> studentsGroupDublicat = groupService.getGroupByName(group);
+            if (studentsGroupDublicat.size() > 0) {
+                for (StudentsGroup s :
+                        studentsGroupDublicat) {
+                    if (s.getId() != studentsGroup.getId()) {
+                        alert = 2;
+                        message = "Группа с таким названием уже существует";
+                    }
+                }
+            }
+            if (alert != 2) {
+                studentsGroup.setName(group);
+                groupService.editGroup(studentsGroup);
+                alert = 1;
+                message = "Группа " + studentsGroup.getName() + "успешно измененна";
+            }
+        } catch (Exception e) {
+            message = "Ошибка (" + e.getMessage() + ")";
+            alert = 3;
+        }
 
-        groupService.editGroup(studentsGroup);
-        String message ;
-        message=studentsGroup.getName();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
 
-        model.addAttribute("message",message);
-        model.addAttribute("alert",2);
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        List<StudentsGroup> studentsGroups = groupService.getAllGroups();
-        model.addAttribute("groups",studentsGroups);
-
-        return new ModelAndView("admin/groups/list");
+        return listFilter(curPage, model);
 
     }
 

@@ -1,8 +1,7 @@
 package ua.org.hasper.Entity;
 
 import ua.org.hasper.Entity.Enums.HomeWorkStatus;
-import ua.org.hasper.Entity.HomeWork;
-import ua.org.hasper.Entity.Student;
+
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -18,22 +17,23 @@ public class HomeWorkStudentStatus {
     @GeneratedValue
     private int id;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
     @Enumerated(EnumType.STRING)
     private HomeWorkStatus homeWorkStatus;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "homework_id")
     private HomeWork homeWork;
+
 
     public HomeWorkStudentStatus() {
     }
 
     public HomeWorkStudentStatus(Student student, HomeWorkStatus homeWorkStatus, HomeWork homeWork) {
-        this.student = student;
+        setStudent(student);
         this.homeWorkStatus = homeWorkStatus;
         this.homeWork = homeWork;
     }
@@ -44,6 +44,9 @@ public class HomeWorkStudentStatus {
 
     public void setStudent(Student student) {
         this.student = student;
+        if (!student.getHomeWorkStudentStatuses().contains(this)) {
+            student.getHomeWorkStudentStatuses().add(this);
+        }
     }
 
     public HomeWorkStatus getStatus() {
@@ -60,6 +63,7 @@ public class HomeWorkStudentStatus {
 
     public void setHomeWork(HomeWork homeWork) {
         this.homeWork = homeWork;
+        homeWork.addHomeWorkStudentStatus(this);
     }
 
     public List<HomeWorkStatus> getAllStatusWithoutCurent() {
@@ -70,14 +74,10 @@ public class HomeWorkStudentStatus {
                 allStatus.add(s);
             }
         }
-            return allStatus;
+        return allStatus;
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

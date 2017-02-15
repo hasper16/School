@@ -14,15 +14,15 @@ public class Schedule {
     @GeneratedValue
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "subj_id")
     private Subject subject;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "teach_id")
     private Teacher teacher;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     private StudentsGroup studentsGroup;
 
@@ -37,8 +37,8 @@ public class Schedule {
     }
 
     public Schedule(Subject subject, Teacher teacher, StudentsGroup studentsGroup, WeekDayName weekDayName, ScheduleTimes scheduleTimes) {
-        this.subject = subject;
-        this.teacher = teacher;
+        setSubject(subject);
+        setTeacher(teacher);
         this.studentsGroup = studentsGroup;
         this.weekDayName = weekDayName;
         scheduleTimes.addSchedule(this);
@@ -51,6 +51,7 @@ public class Schedule {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
+        subject.getSchedules().add(this);
     }
 
     public Teacher getTeacher() {
@@ -59,6 +60,7 @@ public class Schedule {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+        teacher.getSchedules().add(this);
     }
 
     public StudentsGroup getStudentsGroup() {
@@ -67,6 +69,7 @@ public class Schedule {
 
     public void setStudentsGroup(StudentsGroup studentsGroup) {
         this.studentsGroup = studentsGroup;
+        studentsGroup.addSchedule(this);
     }
 
     public WeekDayName getWeekDayName() {
@@ -89,7 +92,4 @@ public class Schedule {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 }

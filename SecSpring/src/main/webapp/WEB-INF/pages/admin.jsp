@@ -2,14 +2,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+    <base href="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/" />
     <title>Prog.kiev.ua</title>
 </head>
 <body>
 <div align="center">
+    <c:url value="/j_spring_security_check" var="loginUrl" />
     <h1>Secret page for admins only!</h1>
-        <iframe width=\"800\" height=\"600\"
-                src=\"https://app.powerbi.com/view?r=eyJrIjoiNTY0OTYyNmEtYzQ4Yy00M2Y2LThlNDktYjhhYTZmMTgxYWMxIiwidCI6IjUyYjM2OTFlLWVmNDYtNGU0Yy05NTM2LWRkMzRkOTU1MDFlYyIsImMiOjl9\"
-                frameborder=\"0\" allowFullScreen=\"true\"></iframe>
+
 
 
     <c:url value="/logout" var="logoutUrl" />

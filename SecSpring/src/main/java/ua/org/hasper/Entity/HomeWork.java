@@ -1,13 +1,11 @@
 package ua.org.hasper.Entity;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import ua.org.hasper.Entity.Enums.HomeWorkStatus;
-import ua.org.hasper.service.StudentService;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Calendar;
 
 /**
  * Created by Pavel.Eremenko on 26.08.2016.
@@ -22,22 +20,22 @@ public class HomeWork {
 
     private Calendar date;
 
-    @OneToOne
+   /* @ManyToOne
     @JoinColumn
-    private StudentsGroup studentsGroup;
+    private StudentsGroup studentsGroup;*/
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     private Teacher teacher;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "subj_id")
     private Subject subject;
 
     private String description;
 
     @OneToMany(mappedBy = "homeWork", cascade = CascadeType.ALL)
-    private List<HomeWorkStudentStatus> homeWorkStudentStatuses = new LinkedList<>();
+    private List<HomeWorkStudentStatus> homeWorkStudentStatuses;
 
 
     public HomeWork() {
@@ -45,13 +43,11 @@ public class HomeWork {
 
     public HomeWork(Calendar date, StudentsGroup studentsGroup, Teacher teacher, Subject subject, String description) {
         this.date = date;
-        this.studentsGroup = studentsGroup;
-        this.teacher = teacher;
-        this.subject = subject;
+        setTeacher(teacher);
+        setSubject(subject);
         this.description = description;
-        for (Student s:studentsGroup.getStudents()) {
-            this.homeWorkStudentStatuses.add(new HomeWorkStudentStatus(s, HomeWorkStatus.Assigned,this));
-        }
+        this.homeWorkStudentStatuses = new LinkedList<>();
+        setStudentsGroup(studentsGroup);
     }
 
     public Calendar getDate() {
@@ -62,12 +58,23 @@ public class HomeWork {
         this.date = date;
     }
 
+
     public StudentsGroup getStudentsGroup() {
-        return studentsGroup;
+
+        for (HomeWorkStudentStatus s:
+             homeWorkStudentStatuses) {
+            return s.getStudent().getStudentsGroup();
+        }
+        return null;
+
     }
 
     public void setStudentsGroup(StudentsGroup studentsGroup) {
-        this.studentsGroup = studentsGroup;
+        for (Student s : studentsGroup.getStudents()) {
+            this.homeWorkStudentStatuses.add(new HomeWorkStudentStatus(s, HomeWorkStatus.Assigned, this));
+        }
+
+
     }
 
     public Teacher getTeacher() {
@@ -76,6 +83,7 @@ public class HomeWork {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+        teacher.getHomeWorks().add(this);
     }
 
     public Subject getSubject() {
@@ -84,6 +92,7 @@ public class HomeWork {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
+        subject.getHomeWorks().add(this);
     }
 
     public String getDescription() {
@@ -94,10 +103,14 @@ public class HomeWork {
         this.description = description;
     }
 
-    public String getStrDate(){
+    public String getStrDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         return dateFormat.format(this.getDate().getTime());
 
+    }
+
+    public int getId() {
+        return id;
     }
 
     public List<HomeWorkStudentStatus> getHomeWorkStudentStatuses() {
@@ -108,11 +121,7 @@ public class HomeWork {
         this.homeWorkStudentStatuses = homeWorkStudentStatuses;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public void addHomeWorkStudentStatus(HomeWorkStudentStatus homeWorkStudentStatus) {
+        homeWorkStudentStatuses.add(homeWorkStudentStatus);
     }
 }

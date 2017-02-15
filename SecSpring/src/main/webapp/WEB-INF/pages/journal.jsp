@@ -15,11 +15,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shool</title>
 
-    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css" />
-    <link rel="stylesheet" href="/css/assets/ie10-viewport-bug-workaround.css" type="text/css" />
-    <link rel="stylesheet" href="/css/jumbotron.css" type="text/css" />
-    <link rel="stylesheet" href="/css/footer.css" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/bootstrap.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/assets/ie10-viewport-bug-workaround.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/jumbotron.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/footer.css"/>" type="text/css" />
+    <style>
+        table th p {
+            text-align:center;
+            white-space:nowrap;
+            -webkit-transform: rotate(-90deg);
+            -moz-transform: rotate(-90deg);
+            -ms-transform: rotate(-90deg);
+            -o-transform: rotate(-90deg);
+            transform: rotate(-90deg);
+            margin:0 0;
 
+        }
+        table th p:before {
+            content:'';
+            width:0;
+            padding-top:110%;
+            display:inline-block;
+            vertical-align:middle;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -27,30 +47,30 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">School</a>
+            <a class="navbar-brand" href="<c:url value="/"/>">School</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <!-- <li class="active"><a href="#">Ссылка</a></li>-->
-                <li><a href="/homework">Домашние задания</a></li>
-                <li><a href="/schedule">Расписание уроков</a></li>
-                <li class="active"><a href="/journal">Журнал</a></li>
+                <li><a href="<c:url value="/homework"/>">Домашние задания</a></li>
+                <li><a href="<c:url value="/schedule"/>">Расписание уроков</a></li>
+                <li class="active"><a href="<c:url value="/journal"/>">Журнал</a></li>
+                <li ${noAdminHide}><a href="<c:url value="/admin/"/>">Учительская</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">${login} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/profile">Профиль</a></li>
+                        <li><a href="<c:url value="/profile"/>">Профиль</a></li>
                     </ul>
                 </li>
             </ul>
@@ -65,13 +85,15 @@
 
 <div class="jumbotron">
     <div class="container">
-        <h1>Журнал</h1>
-        <div class="row">
-            <form name="journal_search" action="journal_filter" method="POST">
+
+            <form name="journal_search" action="journal" method="POST">
                 <div class="col-md-2">
                     <select class="form-control" name="j_subject">
-                        <c:forEach items="${subject}" var="sub">
-                            <option><c:out value="${sub}"/></option>
+                        <option value="${curSubject.id}"><c:out value="${curSubject.name}"/></option>
+                        <c:forEach items="${subjects}" var="sub">
+                            <c:if test="${curSubject.id != sub.id}">
+                            <option value="${sub.id}"><c:out value="${sub.name}"/></option>
+                            </c:if>
                         </c:forEach>
                     </select>
                 </div>
@@ -91,32 +113,33 @@
                     <button type="submit" class="btn btn-default">Search</button>
                 </div>
             </form>
-        </div>
     </div>
-</div> <!-- /container -->
+    </div>
+
 
 <div class="homeworktable">
     <div class="container">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="ct">
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
                 <tr>
-                    <td><h4>Предмет</h4></td>
+                    <th>Предмет</th>
                     <c:forEach items="${headerCalendar}" var="headcal">
-                    <td><h4><c:out value="${headcal}"/></h4></td>
+                    <th><p><c:out value="${headcal}"/></p></th>
                     </c:forEach>
                 </tr>
                 </thead>
+                <tbody>
                 ${jurtab}
+                </tbody>
             </table>
-
         </div>
         </div>
     </div>
 
 
 
-<div id="footer">
+<div class="footer">
     <div class="container">
         <p class="text-muted">Create by H@sper</p>
     </div>
@@ -125,9 +148,7 @@
    ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script>
-    window.jQuery || document.write(' < script src = "../../assets/js/vendor/jquery.min.js" > < \/script>')
-</script>
+<script>window.jQuery || document.write('<script src="/js/jquery-3.1.1.min.js"><\/script>')</script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
 </body>

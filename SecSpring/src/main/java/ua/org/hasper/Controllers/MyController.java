@@ -1,35 +1,61 @@
 package ua.org.hasper.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.ParseException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import ua.org.hasper.Entity.*;
-import ua.org.hasper.Entity.Enums.HomeWorkStatus;
-import ua.org.hasper.Entity.Enums.WeekDayName;
-import ua.org.hasper.service.*;
+import ua.org.hasper.Entity.Student;
+import ua.org.hasper.Entity.StudentsGroup;
+import ua.org.hasper.service.GroupService;
+import ua.org.hasper.service.HomeWorkService;
+import ua.org.hasper.service.MarkStampService;
+import ua.org.hasper.service.StudentService;
 
-import java.text.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 @Controller
 public class MyController {
 
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private GroupService groupService;
+    @Autowired
+    private MarkStampService markStampService;
+    @Autowired
+    private HomeWorkService homeWorkService;
+
     @RequestMapping("/")
     public String index(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-
         model.addAttribute("login", user.getUsername());
-        model.addAttribute("roles", user.getAuthorities());
+
+        Collection<GrantedAuthority> roles = user.getAuthorities();
+        for (GrantedAuthority ga:
+                roles) {
+            if(!ga.getAuthority().equals("ROLE_ADMIN") && !ga.getAuthority().equals("ROLE_TEACHER")){
+                model.addAttribute("noAdminHide","class=\"hide\"");
+            }
+
+            List<Student>top5Students = studentService.top5Students();
+            List<StudentsGroup>top5Groups = groupService.top5Groups();
+            model.addAttribute("top5Students",top5Students);
+            model.addAttribute("top5Groups",top5Groups);
+            Integer countStudents = studentService.countStudents();
+            Integer countGroups = groupService.countGroups();
+            Integer countMarks = markStampService.countMarkStamps();
+            Integer countHomeWorks = homeWorkService.countHomeWorks();
+            model.addAttribute("countStudents",countStudents);
+            model.addAttribute("countGroups", countGroups);
+            model.addAttribute("countMarks", countMarks);
+            model.addAttribute("countHomeWorks",countHomeWorks);
+
+
+        }
 
 
         return "index";
@@ -43,6 +69,8 @@ public class MyController {
 
         return "admin";
     }
+
+
 
 
 

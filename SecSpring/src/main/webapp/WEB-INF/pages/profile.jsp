@@ -2,17 +2,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shool</title>
 
-    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css" />
-    <link rel="stylesheet" href="/css/assets/ie10-viewport-bug-workaround.css" type="text/css" />
-    <link rel="stylesheet" href="/css/jumbotron.css" type="text/css" />
-    <link rel="stylesheet" href="/css/footer.css" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/bootstrap.css"/>" type="text/css"/>
+    <link rel="stylesheet" href="<c:url value="/css/assets/ie10-viewport-bug-workaround.css"/>" type="text/css"/>
+    <link rel="stylesheet" href="<c:url value="/css/jumbotron.css"/>" type="text/css"/>
+    <link rel="stylesheet" href="<c:url value="/css/footer.css"/>" type="text/css"/>
 </head>
 
 <body>
@@ -20,31 +20,34 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">School</a>
+            <a class="navbar-brand" href="<c:url value="/"/>">School</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <!-- <li class="active"><a href="#">Ссылка</a></li>-->
-                <li><a href="/homework">Домашние задания</a></li>
-                <li><a href="/schedule">Расписание уроков</a></li>
-                <li><a href="/journal">Журнал</a></li>
+                <li><a href="<c:url value="/homework"/>">Домашние задания</a></li>
+                <li><a href="<c:url value="/schedule"/>">Расписание уроков</a></li>
+                <li><a href="<c:url value="/journal"/>">Журнал</a></li>
+                <li ${noAdminHide}><a href="<c:url value="/admin/"/>">Учительская</a></li>
             </ul>
 
-            <ul class="nav navbar-nav navbar-right"> <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">${login} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li><a href="/profile">Профиль</a></li>
-                </ul>
-            </li></ul>
-            <c:url value="/logout" var="logoutUrl" />
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">${login} <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<c:url value="/profile"/>">Профиль</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <c:url value="/logout" var="logoutUrl"/>
             <form class="navbar-form navbar-right" action="${logoutUrl}">
                 <button type="submit" class="btn btn-primary">Выйти</button>
             </form>
@@ -52,116 +55,111 @@
 
     </div>
 </nav>
-
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
-        <div class="container">
-            <h1>Profile</h1>
- <div class="container">
-     <div class="row">
-     <div class="col-md-5">
-         <form role="form" action="/profile" method="POST">
-          <div class="form-studentsGroup">
-            <div class="row">
-     <div class="col-md-8">
-                <div class="col-md-10">
-            <label for="InputLogin">Login</label>
-                    <input type="text" class="form-control" id="InputLogin" name="j_login" value="${login}">
-         </div>
-                </div>
-     </div>
-     <div class="row">
-     <div class="col-md-8">
-                <div class="col-md-10">
-                    <label for="InputName">Имя</label>
-                    <input type="text" class="form-control" id="InputName" name="j_name" value="${name}">
-         </div>
-
-                </div>
-     </div>
-     <div class="row">
-     <div class="col-md-8">
-                <div class="col-md-10"><label for="InputSurname">Фамилия</label>
-                    <input type="text" class="form-control" id="InputSurname" name="j_surname" value="${surname}">
-         </div>
-
-                </div>
-     </div>
-     <div class="row">
-     <div class="col-md-8">
-                <div class="col-md-10">
-                    <label for="InputBirthday">Дата рождения</label>
-                    <input type="date" class="form-control" id="InputBirthday" name="j_birthday" value="${birthday}">
-         </div>
-
-                </div>
-     </div>
-     <div class="row">
-     <div class="col-md-8">
-                <div class="col-md-10">
-                    <label for="InputEmail">Email</label>
-                    <input type="email" class="form-control" id="InputEmail" name="j_email" value="${email}">
-         </div>
-
-                </div>
-     </div>
-     <div class="row">
-     <div class="col-md-8">
-                <div class="col-md-10">
-         <label for="InputPhone">Телефон</label>
-                    <input type="tel" class="form-control" id="InputPhone" name="j_phone" value="${phone}">
-         </div>
-
-                </div>
-     </div>
-              
-              <div class="row"> 
-     <div class="col-md-8">
-                <div class="col-md-10 pudbtn">
-                   
-         <button type="submit" class="btn btn-success" >Применить</button>
-                    
-         </div>
-
-                </div>
-     </div>
-         </div>
-     </form>
-         </div>
-        
-     <div class="col-md-7">
-          <div class="row"><img src="https://pbs.twimg.com/profile_images/378800000232458460/b5d097e08c63a6530e9751bcb0a13a57_400x400.png" alt="..." class="img-thumbnail"></div>
-         <div class="row"> <button type="button" class="btn btn-link">Обновить фото</button></div></div>
-     </div>
-    
-            </div>             
-                  
-            
-          
-        
-    
-            </div>
-            </div>
- 
-    
-    
-
-
-        
-
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted">Create by H@sper</p>
-      </div>
+<div class="container" >
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <%-- Notifications--%>
+        <c:if test="${alert == 1}">
+            <div class="alert alert-success alert-dismissable" style="margin-top: 20px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    ${message}</div>
+        </c:if>
+        <c:if test="${alert == 2}">
+            <div class="alert alert-warning alert-dismissable" style="margin-top: 20px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    ${message}</div>
+        </c:if>
+        <c:if test="${alert == 3}">
+            <div class="alert alert-danger alert-dismissable" style="margin-top: 20px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    ${message}</div>
+        </c:if>
+        <c:if test="${alert == 4}">
+            <div class="alert alert-info alert-dismissable" style="margin-top: 20px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    ${message}</div>
+        </c:if>
+        <%-- Notifications--%>
     </div>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>
-        window.jQuery || document.write(' < script src = "../../assets/js/vendor/jquery.min.js" > < \/script>')
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <div class="col-md-1"></div>
+</div>
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+
+    <div class="container">
+
+        <h1>Профиль</h1>
+        <div class="container-fluid">
+            <div class="row">
+                <form class="form-horizontal form-validation" role="form" enctype="multipart/form-data"
+                      action="/profile" method="POST">
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="inputLogin">Login</label>
+                            <input id="inputLogin" type="text" class="form-control" name="j_login" value="${login}">
+                        </div>
+                        <div class="form-group novalid">
+                            <label for="inputPassword">New Password</label>
+                            <input id="inputPassword" type="password" class="form-control" name="j_password"
+                                   value="${password}">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Имя</label>
+                            <input id="inputName" type="text" class="form-control" name="j_name"
+                                   value="${student.name}">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputSurname">Фамилия</label>
+                            <input id="inputSurname" type="text" class="form-control" name="j_surname"
+                                   value="${student.surname}">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputBirthday">Дата рождения</label>
+                            <input id="inputBirthday" type="date" class="form-control" name="j_birthday"
+                                   value="${student.birthdayHtml}">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail">Email</label>
+                            <input id="inputEmail" type="email" class="form-control" name="j_email"
+                                   value="${student.email}">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPhone">Телефон</label>
+                            <input id="inputPhone" type="tel" class="form-control" name="j_phone"
+                                   value="${student.phone}">
+                        </div>
+
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-6">
+                        <div class="form-group novalid">
+                            <img src="/image/${student.photo.id}"
+                                style="max-height: 50%;" class="img-thumbnail img-responsive">
+                            <input type="file" class="btn btn-link" name="j_photo">
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <button id="save" type="submit" class="btn btn-success" ${buttonStatus}>Применить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="footer">
+    <div class="container">
+        <p class="text-muted">Create by H@sper</p>
+    </div>
+</div>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/js/jquery-3.1.1.min.js"><\/script>')</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="/js/validator/common.js"></script>
 </body>
 
 </html>

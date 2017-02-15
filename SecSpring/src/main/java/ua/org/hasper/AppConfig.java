@@ -108,7 +108,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
     private Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update" /*"create-drop"*/);
         return properties;
     }
 

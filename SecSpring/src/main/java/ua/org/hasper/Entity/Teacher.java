@@ -1,9 +1,13 @@
 package ua.org.hasper.Entity;
 
+import org.hibernate.Hibernate;
+import ua.org.hasper.repository.TeacherRepository;
+
 import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -28,6 +32,14 @@ public class Teacher {
         @JoinColumn(name = "main_user_id")
         private CustomUser user;
 
+        @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL)
+        List<Jurnal>jurnals;
+        @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL)
+        List<HomeWork>homeWorks;
+        @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL)
+        List<Schedule>schedules;
+
+
         public Teacher() {
         }
 
@@ -45,9 +57,6 @@ public class Teacher {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -107,5 +116,27 @@ public class Teacher {
         this.user = user;
     }
 
+    public List<Jurnal> getJurnals() {
+         return jurnals;
+    }
 
+    public void setJurnals(List<Jurnal> jurnals) {
+        this.jurnals = jurnals;
+    }
+
+    public List<HomeWork> getHomeWorks() {
+        return homeWorks;
+    }
+
+    public void setHomeWorks(List<HomeWork> homeWorks) {
+        this.homeWorks = homeWorks;
+    }
+
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
 }

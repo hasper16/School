@@ -1,6 +1,7 @@
 package ua.org.hasper.Controllers.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import ua.org.hasper.Controllers.Tools;
 import ua.org.hasper.Entity.*;
+import ua.org.hasper.Entity.Enums.Mark;
 import ua.org.hasper.Entity.Enums.UserRole;
 import ua.org.hasper.service.*;
 
@@ -19,7 +22,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,209 +38,237 @@ public class UsersController {
     @Autowired
     private UserService userService;
     @Autowired
-    private HomeWorkStudentStatusService homeWorkStudentStatusService;
-    @Autowired
-    private JurnalService jurnalService;
-    @Autowired
-    private ScheduleService scheduleService;
-    @Autowired
-    private HomeWorkService homeWorkService;
+    private PhotoService photoService;
+
+    int PAGESIZE = 25;
+    int curPage = 0;
 
     @RequestMapping("admin/users/add")
-    public void add(Model model) {
+    public ModelAndView add(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
-        List<StudentsGroup> studentsGroups = new LinkedList<>();
-        studentsGroups = groupService.getAllGroups();
-        List<String> groupsName = new LinkedList<>();
 
-        for (StudentsGroup sg : studentsGroups) {
-            groupsName.add(sg.getName());
-        }
+        List<StudentsGroup> studentsGroups = groupService.getAllGroups();
 
-
-        model.addAttribute("j_groups", groupsName);
+        model.addAttribute("j_groups", studentsGroups);
         model.addAttribute("j_roles", UserRole.values());
-
-        //return "admin/users/add";
-    }
-
-    @RequestMapping(value = "admin/users/add", method = RequestMethod.POST)
-    public ModelAndView newUser(@RequestParam(value = "j_name") String name,
-                                @RequestParam(value = "j_surname") String surname,
-                                @RequestParam(value = "j_login") String login,
-                                @RequestParam(value = "j_role") String role,
-                                @RequestParam(value = "j_group") String group,
-                                @RequestParam(value = "j_birthday") String birthday,
-                                @RequestParam(value = "j_email") String email,
-                                @RequestParam(value = "j_phone") long phone,
-                                Model model) throws ParseException {
-        String newPasswordStr = "password";
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String newPassword = bCryptPasswordEncoder.encode(newPasswordStr);
-        CustomUser customUser = new CustomUser(login, newPassword, UserRole.valueOf(role));
-        userService.addUser(customUser);
-
-        //parse Date
-        Calendar cal;
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = formatter.parse(birthday);
-        cal = Calendar.getInstance();
-        cal.setTime(date);
-        //end parse Date
-
-        if (UserRole.valueOf(role).equals(UserRole.STUDENT)) {
-            StudentsGroup studentsGroup = groupService.getGroupByName(group);
-            Student student = new Student(name, surname, cal, phone, email, customUser, studentsGroup);
-            studentService.addStudent(student);
-        } else if (UserRole.valueOf(role).equals(UserRole.TEACHER)) {
-            Teacher teacher = new Teacher(name, surname, cal, phone, email, customUser);
-            teacherService.addOrUpdateTeacher(teacher);
-        }
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
-        model.addAttribute("addStatus", 1);
 
         return new ModelAndView("admin/users/add");
     }
 
+    @RequestMapping(value = "admin/users/add", method = RequestMethod.POST)
+    public ModelAndView newUser(@RequestParam(defaultValue = "",value = "j_name",required = false) String name,
+                                @RequestParam(defaultValue = "",value = "j_surname",required = false) String surname,
+                                @RequestParam(value = "j_login") String login,
+                                @RequestParam(value = "j_role") String role,
+                                @RequestParam(defaultValue = "-1", value = "j_group", required = false) Integer groupId,
+                                @RequestParam(defaultValue = "",value = "j_birthday",required = false) String birthday,
+                                @RequestParam(defaultValue = "",value = "j_email",required = false) String email,
+                                @RequestParam(defaultValue = "",value = "j_phone",required = false) Long phone,
+                                Model model) throws ParseException {
+        String newPasswordStr = "password";
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String newPassword = bCryptPasswordEncoder.encode(newPasswordStr);
 
-    @RequestMapping("admin/users/list")
-    public void list(Model model) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
 
+        int alert = 0;
+        String message = "";
 
-        List<Student> students = studentService.getAllStudents();
-        List<Teacher> teachers = teacherService.getAllTeachers();
-        List<CustomUser> customUsers = userService.getUsersByRole(UserRole.ADMIN);
-
-        List<StudentsGroup>studentsGroups=groupService.getAllGroups();
-        model.addAttribute("allGroups",studentsGroups);
-
-        model.addAttribute("students",students);
-        model.addAttribute("teachers",teachers);
-        model.addAttribute("admins",customUsers);
-
-    }
-
-    @RequestMapping("/student/delete")
-    public ModelAndView deleteStudent(@RequestParam(value="id") int id, Model model) {
-
-        Student student = studentService.getStudentById(id);
-        String message = student.getName()+" "+student.getSurname();
-        homeWorkStudentStatusService.deleteByStudent(student);
-
-        List<Jurnal> jurnals = jurnalService.findByStudent(student);
-
-        for (Jurnal j:jurnals) {
-            jurnalService.delJurnal(j);
+        UserRole userRole = UserRole.RoleByName(role);
+        CustomUser customUser = new CustomUser(login, newPassword, userRole);
+        try {
+            if (userService.getUserByLogin(login) != null) {
+                alert = 2;
+                message = "Пользователь с таким логином уже существует";
+                model.addAttribute("j_name", name);
+                model.addAttribute("j_surname", surname);
+                model.addAttribute("j_login", login);
+                model.addAttribute("j_birthday", birthday);
+                model.addAttribute("j_email", email);
+                model.addAttribute("j_phone", phone);
+            } else if (userRole.equals(UserRole.ROLE_ADMIN)) {
+                userService.addUser(customUser);
+                alert = 1;
+                message = "Пользователь c ролью " + UserRole.ROLE_ADMIN.toString() + " логин " + customUser.getLogin() + " успешно добавлен";
+            } else if (userRole.equals(UserRole.ROLE_STUDENT)) {
+                StudentsGroup studentsGroup = groupService.getGroupById(groupId);
+                Student student = new Student(name, surname, Tools.parteHTMLDate(birthday), phone, email, customUser, studentsGroup, photoService.findById(1));
+                userService.addUser(customUser);
+                studentService.addStudent(student);
+                alert = 1;
+                message = "Пользователь c ролью " + UserRole.ROLE_STUDENT.toString() + " логин " + customUser.getLogin() + " успешно добавлен";
+            } else if (userRole.equals(UserRole.ROLE_TEACHER)) {
+                Teacher teacher = new Teacher(name, surname, Tools.parteHTMLDate(birthday), phone, email, customUser);
+                userService.addUser(customUser);
+                teacherService.addOrUpdateTeacher(teacher);
+                alert = 1;
+                message = "Пользователь c ролью " + UserRole.ROLE_TEACHER.toString() + " логин " + customUser.getLogin() + " успешно добавлен";
+            } else {
+                alert = 2;
+                message = "Не все поля заполнены";
+                model.addAttribute("j_name", name);
+                model.addAttribute("j_surname", surname);
+                model.addAttribute("j_login", login);
+                model.addAttribute("j_birthday", birthday);
+                model.addAttribute("j_email", email);
+                model.addAttribute("j_phone", phone);
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
         }
 
-        CustomUser customUser = userService.getUserById(student.getUser().getId());
+        model.addAttribute("alert", alert);
+        model.addAttribute("message", message);
 
-        studentService.deleteStudent(student);
-        userService.deleteUser(customUser);
+        return add(model);
+    }
 
+
+    @RequestMapping("admin/users/teachers")
+    public ModelAndView teachersList(Model model) {
+
+        return teachersListPage(0, model);
+    }
+
+    @RequestMapping("admin/users/students")
+    public ModelAndView studentsList(Model model) {
+        return studentsListPage(0, model);
+    }
+
+    @RequestMapping("admin/users/admins")
+    public ModelAndView adminsList(Model model) {
+        return adminsListPage(0, model);
+    }
+
+
+    @RequestMapping(value = "admin/users/teachers", params = {"page"})
+    public ModelAndView teachersListPage(@RequestParam(value = "page") int page,
+                                         Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
 
-        List<Student> students = studentService.getAllStudents();
-        List<Teacher> teachers = teacherService.getAllTeachers();
-        List<CustomUser> customUsers = userService.getUsersByRole(UserRole.ADMIN);
-        List<StudentsGroup>studentsGroups=groupService.getAllGroups();
-        model.addAttribute("allGroups",studentsGroups);
-        model.addAttribute("students",students);
-        model.addAttribute("teachers",teachers);
-        model.addAttribute("admins",customUsers);
-        model.addAttribute("message",message);
-        model.addAttribute("alert",1);
+        Page<Teacher> teacherPage = teacherService.getAllTeachers(page, PAGESIZE);
+        curPage = page;
+        int totalPages = teacherPage.getTotalPages() - 1;
+        List<Teacher> teachers = teacherPage.getContent();
 
-        return new ModelAndView("admin/users/list");
+        model.addAttribute("teachers", teachers);
+        model.addAttribute("curPage", curPage);
+        model.addAttribute("totalPages", totalPages);
+
+        return new ModelAndView("admin/users/teachers");
+    }
+
+    @RequestMapping(value = "admin/users/students", params = {"page"})
+    public ModelAndView studentsListPage(@RequestParam(value = "page") int page,
+                                         Model model) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("login", user.getUsername());
+
+        Page<Student> studentPage = studentService.getAllStudents(page, PAGESIZE);
+        curPage = page;
+        int totalPages = studentPage.getTotalPages() - 1;
+        List<Student> students = studentPage.getContent();
+        List<StudentsGroup> studentsGroups = groupService.getAllGroups();
+
+        model.addAttribute("allGroups", studentsGroups);
+        model.addAttribute("students", students);
+        model.addAttribute("curPage", curPage);
+        model.addAttribute("totalPages", totalPages);
+        return new ModelAndView("admin/users/students");
+    }
+
+    @RequestMapping(value = "admin/users/admins", params = {"page"})
+    public ModelAndView adminsListPage(@RequestParam(value = "page") int page,
+                                       Model model) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("login", user.getUsername());
+
+        Page<CustomUser> userPage = userService.getUsersByRole(UserRole.ROLE_ADMIN, page, PAGESIZE);
+        curPage = page;
+        int totalPages = userPage.getTotalPages() - 1;
+        List<CustomUser> customUsers = userPage.getContent();
+
+        model.addAttribute("admins", customUsers);
+        model.addAttribute("curPage", curPage);
+        model.addAttribute("totalPages", totalPages);
+        return new ModelAndView("admin/users/admins");
+    }
+
+
+    @RequestMapping("/student/delete")
+    public ModelAndView deleteStudent(@RequestParam(value = "id") int id, Model model) {
+
+        Student student = studentService.getStudentById(id);
+        int alert = 0;
+        String message = "";
+        try {
+            userService.deleteUser(student.getUser());
+            message = "Пользователь " + student.getUser().getLogin() + "успешно удален";
+            alert = 1;
+        } catch (Exception e) {
+            message = "Ошибка (" + e.getMessage() + ")";
+            alert = 3;
+        }
+
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
+
+        return studentsListPage(curPage, model);
 
     }
 
     @RequestMapping("/teacher/delete")
-    public ModelAndView deleteTeacher(@RequestParam(value="id") int id, Model model) {
+    public ModelAndView deleteTeacher(@RequestParam(value = "id") int id, Model model) {
 
         Teacher teacher = teacherService.findById(id);
-        String message = teacher.getName()+" "+teacher.getSurname();
+        String message = "";
+        int alert = 0;
 
-        List<Jurnal> jurnals = jurnalService.findByTeacher(teacher);
-
-        for (Jurnal j:jurnals) {
-            j.setTeacher(null);
-            jurnalService.addOrUpdateJurnal(j);
+        try {
+            userService.deleteUser(teacher.getUser());
+            message = "Пользователь " + teacher.getUser().getLogin() + "успешно удален";
+            alert = 1;
+        } catch (Exception e) {
+            message = "Ошибка (" + e.getMessage() + ")";
+            alert = 3;
         }
 
-        List<Schedule>schedules = scheduleService.findByTeacher(teacher);
 
-        for (Schedule s:schedules) {
-            s.setTeacher(null);
-            scheduleService.addOrUpdateSchedule(s);
-        }
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        List<HomeWork>homeWorks = homeWorkService.findByTeacher(teacher);
-
-        for (HomeWork h:
-             homeWorks) {
-            h.setTeacher(null);
-            homeWorkService.addOrUpdateHomeWork(h);
-        }
-
-        CustomUser customUser = userService.getUserById(teacher.getUser().getId());
-
-        teacherService.delTeacher(teacher);
-        userService.deleteUser(customUser);
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
-
-        List<Student> students = studentService.getAllStudents();
-        List<Teacher> teachers = teacherService.getAllTeachers();
-        List<CustomUser> customUsers = userService.getUsersByRole(UserRole.ADMIN);
-        List<StudentsGroup>studentsGroups=groupService.getAllGroups();
-        model.addAttribute("allGroups",studentsGroups);
-        model.addAttribute("students",students);
-        model.addAttribute("teachers",teachers);
-        model.addAttribute("admins",customUsers);
-        model.addAttribute("message",message);
-        model.addAttribute("alert",1);
-
-        return new ModelAndView("admin/users/list");
+        return teachersListPage(curPage, model);
 
     }
 
     @RequestMapping("/admin/delete")
-    public ModelAndView deleteAdmin(@RequestParam(value="id") int id, Model model) {
+    public ModelAndView deleteAdmin(@RequestParam(value = "id") int id, Model model) {
 
         CustomUser customUser = userService.getUserById(id);
-        String message = customUser.getLogin();
-        userService.deleteUser(customUser);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
+        String message = "";
+        int alert = 0;
+        try {
+            userService.deleteUser(customUser);
+            message = "Пользователь " + customUser.getLogin() + "успешно удален";
+            alert = 1;
+        } catch (Exception e) {
+            message = "Ошибка (" + e.getMessage() + ")";
+            alert = 3;
+        }
 
-        List<Student> students = studentService.getAllStudents();
-        List<Teacher> teachers = teacherService.getAllTeachers();
-        List<CustomUser> customUsers = userService.getUsersByRole(UserRole.ADMIN);
-        List<StudentsGroup>studentsGroups=groupService.getAllGroups();
-        model.addAttribute("allGroups",studentsGroups);
-        model.addAttribute("students",students);
-        model.addAttribute("teachers",teachers);
-        model.addAttribute("admins",customUsers);
-        model.addAttribute("message",message);
-        model.addAttribute("alert",1);
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        return new ModelAndView("admin/users/list");
-
+        return adminsListPage(curPage, model);
     }
 
     @RequestMapping("/teacher/edit")
-    public ModelAndView editTeacher(@RequestParam(value="id") int id,
+    public ModelAndView editTeacher(@RequestParam(value = "id") int id,
                                     @RequestParam(value = "j_name") String name,
                                     @RequestParam(value = "j_surname") String surname,
                                     @RequestParam(value = "j_login") String login,
-                                    @RequestParam(value = "j_role") String role,
                                     @RequestParam(value = "j_birthday") String birthday,
                                     @RequestParam(value = "j_email") String email,
                                     @RequestParam(value = "j_phone") long phone,
@@ -247,124 +277,93 @@ public class UsersController {
 
         teacher.setName(name);
         teacher.setSurname(surname);
-        teacher.getUser().setLogin(login);
-        teacher.getUser().setRole(UserRole.valueOf(role));
-
-
-        //parse Date
-        Calendar cal;
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = formatter.parse(birthday);
-        cal = Calendar.getInstance();
-        cal.setTime(date);
-        //end parse Date
-
-        teacher.setBirthday(cal);
+        teacher.setBirthday(Tools.parteHTMLDate(birthday));
         teacher.setEmail(email);
         teacher.setPhone(phone);
 
-        teacherService.addOrUpdateTeacher(teacher);
+        int alert = 0;
+        String message = "";
+        CustomUser dublicateUser = userService.getUserByLogin(login);
+        if (dublicateUser != null && dublicateUser.getId() != teacher.getUser().getId()) {
+            alert = 2;
+            message = "Пользователь с таким логином уже существует";
+        } else {
+            teacher.getUser().setLogin(login);
+            teacherService.addOrUpdateTeacher(teacher);
+            message = "Пользователь " + teacher.getUser().getLogin() + "успешно изменен";
+            alert = 1;
+        }
 
-        List<Student> students = studentService.getAllStudents();
-        List<Teacher> teachers = teacherService.getAllTeachers();
-        List<CustomUser> customUsers = userService.getUsersByRole(UserRole.ADMIN);
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
-        List<StudentsGroup>studentsGroups=groupService.getAllGroups();
-        model.addAttribute("allGroups",studentsGroups);
-        String message = teacher.getName()+" "+teacher.getSurname();
-        model.addAttribute("students",students);
-        model.addAttribute("teachers",teachers);
-        model.addAttribute("admins",customUsers);
-        model.addAttribute("message",message);
-        model.addAttribute("alert",2);
-
-        return new ModelAndView("admin/users/list");
+        return teachersListPage(curPage, model);
 
     }
 
     @RequestMapping("/student/edit")
-    public ModelAndView editStudent(@RequestParam(value="id") int id,
+    public ModelAndView editStudent(@RequestParam(value = "id") int id,
                                     @RequestParam(value = "j_name") String name,
                                     @RequestParam(value = "j_surname") String surname,
                                     @RequestParam(value = "j_login") String login,
-                                    @RequestParam(value = "j_role") String role,
                                     @RequestParam(value = "j_birthday") String birthday,
                                     @RequestParam(value = "j_email") String email,
                                     @RequestParam(value = "j_phone") long phone,
-                                    @RequestParam(value = "j_group") String group,
+                                    @RequestParam(value = "j_group") int groupId,
                                     Model model) throws ParseException {
         Student student = studentService.getStudentById(id);
 
         student.setName(name);
         student.setSurname(surname);
-        student.getUser().setLogin(login);
-        student.getUser().setRole(UserRole.valueOf(role));
 
-
-        //parse Date
-        Calendar cal;
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = formatter.parse(birthday);
-        cal = Calendar.getInstance();
-        cal.setTime(date);
-        //end parse Date
-
-        student.setBirthday(cal);
+        student.setBirthday(Tools.parteHTMLDate(birthday));
         student.setEmail(email);
         student.setPhone(phone);
-        student.setStudentsGroup(groupService.getGroupByName(group));
+        student.setStudentsGroup(groupService.getGroupById(groupId));
+        String message = "";
+        int alert = 0;
 
-        studentService.addStudent(student);
+        CustomUser dublicateUser = userService.getUserByLogin(login);
+        if (dublicateUser != null && dublicateUser.getId() != student.getUser().getId()) {
+            alert = 2;
+            message = "Пользователь с таким логином уже существует";
+        } else {
+            student.getUser().setLogin(login);
+            studentService.addStudent(student);
+            message = "Пользователь " + student.getUser().getLogin() + "успешно изменен";
+            alert = 1;
+        }
 
-        List<Student> students = studentService.getAllStudents();
-        List<Teacher> teachers = teacherService.getAllTeachers();
-        List<CustomUser> customUsers = userService.getUsersByRole(UserRole.ADMIN);
-        List<StudentsGroup>studentsGroups=groupService.getAllGroups();
-        model.addAttribute("allGroups",studentsGroups);
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
-
-        String message = student.getName()+" "+student.getSurname();
-        model.addAttribute("students",students);
-        model.addAttribute("teachers",teachers);
-        model.addAttribute("admins",customUsers);
-        model.addAttribute("message",message);
-        model.addAttribute("alert",2);
-
-        return new ModelAndView("admin/users/list");
+        return studentsListPage(curPage, model);
 
     }
 
     @RequestMapping("/admin/edit")
-    public ModelAndView editStudent(@RequestParam(value="id") int id,
+    public ModelAndView editStudent(@RequestParam(value = "id") int id,
                                     @RequestParam(value = "j_login") String login,
-                                    @RequestParam(value = "j_role") String role,
                                     Model model) throws ParseException {
         CustomUser customUser = userService.getUserById(id);
-        customUser.setLogin(login);
-        customUser.setRole(UserRole.valueOf(role));
+        String message = "";
+        int alert = 0;
 
-        userService.addUser(customUser);
+        CustomUser dublicateUser = userService.getUserByLogin(login);
+        if (dublicateUser != null && dublicateUser.getId() != customUser.getId()) {
+            alert = 2;
+            message = "Пользователь с таким логином уже существует";
+        } else {
+            customUser.setLogin(login);
+            userService.addUser(customUser);
+            message = "Пользователь " + customUser.getLogin() + "успешно изменен";
+            alert = 1;
+        }
 
-        List<Student> students = studentService.getAllStudents();
-        List<Teacher> teachers = teacherService.getAllTeachers();
-        List<CustomUser> customUsers = userService.getUsersByRole(UserRole.ADMIN);
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
-        List<StudentsGroup>studentsGroups=groupService.getAllGroups();
-        model.addAttribute("allGroups",studentsGroups);
-        String message = customUser.getLogin();
-        model.addAttribute("students",students);
-        model.addAttribute("teachers",teachers);
-        model.addAttribute("admins",customUsers);
-        model.addAttribute("message",message);
-        model.addAttribute("alert",2);
-
-        return new ModelAndView("admin/users/list");
+        return adminsListPage(curPage, model);
 
     }
 }

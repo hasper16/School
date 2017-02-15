@@ -12,8 +12,8 @@
     <meta charset="utf-8"/>
     <title>Домашние задания</title>
 
-    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css" media="screen">
-    <link rel="stylesheet" href="/css/layout.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="<c:url value="/css/bootstrap.css"/>" type="text/css" media="screen">
+    <link rel="stylesheet" href="<c:url value="/css/layout.css"/>" type="text/css" media="screen"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -22,14 +22,14 @@
     <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen"/>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <script src="/js/jquery-1.5.2.min.js" type="text/javascript"></script>
-    <script src="/js/hideshow.js" type="text/javascript"></script>
-    <script src="/js/jquery.tablesorter.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/js/jquery.equalHeight.js"></script>
+    <script src="<c:url value="/js/jquery-1.5.2.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/js/hideshow.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/js/jquery.tablesorter.min.js"/>" type="text/javascript"></script>
+    <script type="text/javascript" src="<c:url value="/js/jquery.equalHeight.js"/>"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-                    $(".tablesorter").tablesorter();
-                }
+                $(".tablesorter").tablesorter();
+            }
         );
         $(document).ready(function () {
 
@@ -66,16 +66,16 @@
 
 <header id="header">
     <hgroup>
-        <h1 class="site_title"><a href="/admin/">Учительская</a></h1>
+        <h1 class="site_title"><a href="<c:url value="/admin/"/>">Учительская</a></h1>
         <h2 class="section_title">School</h2>
-        <div class="btn_view_site"><a href="/">Открыть сайт</a></div>
+        <div class="btn_view_site"><a href="<c:url value="/"/>">Открыть сайт</a></div>
     </hgroup>
 </header> <!-- end of header bar -->
 
 <section id="secondary_bar">
     <div class="user">
         <p>${login}</p>
-        <a class="logout_user" href="/logout" title="Logout">Logout</a>
+        <a class="logout_user" href="<c:url value="/logout"/>" title="Logout">Logout</a>
     </div>
     <!--<div class="breadcrumbs_container">
         <article class="breadcrumbs"><a href="./index.html">Учительская</a> <div class="breadcrumb_divider"></div> <a class="current">Dashboard</a></article>
@@ -86,175 +86,241 @@
 
     <h3>Расписание занятий</h3>
     <ul class="toggle">
-        <li class="icn_new_article active"><a href="/admin/timetable/add">Новое расписание</a></li>
-        <li class="icn_categories"><a href="/admin/timetable/list">Все расписания</a></li>
-        <li class="icn_new_article"><a href="/admin/subjects/add">Новый предмет</a></li>
-        <li class="icn_categories"><a href="/admin/subjects/list">Все предметы</a></li>
-        <li class="icn_new_article"><a href="/admin/groups/add">Новый класс</a></li>
-        <li class="icn_categories"><a href="/admin/groups/list">Все классы</a></li>
+        <li class="icn_new_article active"><a href="<c:url value="/admin/timetable/add"/>">Новое расписание</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/timetable/list"/>">Все расписания</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/subjects/add"/>">Новый предмет</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/subjects/list"/>">Все предметы</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/groups/add"/>">Новый класс</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/groups/list"/>">Все классы</a></li>
     </ul>
     <h3>Пользователи</h3>
     <ul class="toggle">
-        <li class="icn_add_user"><a href="/admin/users/add">Добавить нового пользователя</a></li>
-        <li class="icn_view_users"><a href="/admin/users/list">Список пользователей</a></li>
+        <li class="icn_add_user"><a href="<c:url value="/admin/users/add"/>">Добавить нового пользователя</a></li>
+        <li class="icn_view_users"><a href="<c:url value="/admin/users/list"/>">Список пользователей</a></li>
     </ul>
     <h3>Домашние задания</h3>
     <ul class="toggle">
-        <li class="icn_new_article"><a href="/admin/homeworks/add">Новое задание</a></li>
-        <li class="icn_categories"><a href="/admin/homeworks/list">Все задания</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/homeworks/add"/>">Новое задание</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/homeworks/list"/>">Все задания</a></li>
     </ul>
     <h3>Журнал оценок и посещений</h3>
     <ul class="toggle">
-        <li class="icn_new_article"><a href="/admin/journal/addMark">Новая оценка</a></li>
-        <li class="icn_folder"><a href="/admin/journal/journalList">Журнал</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/journal/addMark"/>">Новая оценка</a></li>
+        <li class="icn_folder"><a href="<c:url value="/admin/journal/journalList"/>">Журнал</a></li>
     </ul>
-    <h3>Отчеты</h3>
-    <ul class="toggle">
-        <li class="icn_categories"><a href="/admin/reports/progress">Успеваемость</a></li>
-        <li class="icn_categories"><a href="/admin/reports/visits">Посещения</a></li>
-        <li class="icn_categories"><a href="/admin/reports/studentsRating">Рейтинг учеников</a></li>
-    </ul>
-    <h3>Admin</h3>
-    <ul class="toggle">
-        <li class="icn_audio"><a href="#">Объявление</a></li>
-        <li class="icn_settings"><a href="#">Options</a></li>
-        <li class="icn_security"><a href="#">Security</a></li>
-        <li class="icn_jump_back"><a href="#">Logout</a></li>
-    </ul>
+    <div style="visibility: hidden;">
+        <h3>Отчеты</h3>
+        <ul class="toggle">
+            <li class="icn_categories"><a href="<c:url value="/admin/reports/progress"/>">Успеваемость</a></li>
+            <li class="icn_categories"><a href="<c:url value="/admin/reports/visits"/>">Посещения</a></li>
+            <li class="icn_categories"><a href="<c:url value="/admin/reports/studentsRating"/>">Рейтинг учеников</a>
+            </li>
+        </ul>
+        <h3>Admin</h3>
+        <ul class="toggle">
+            <li class="icn_audio"><a href="#">Объявление</a></li>
+            <li class="icn_settings"><a href="#">Options</a></li>
+            <li class="icn_security"><a href="#">Security</a></li>
+            <li class="icn_jump_back"><a href="#">Logout</a></li>
+        </ul>
+    </div>
 
     <footer>
         <hr/>
         <p><strong>Copyright &copy; 2016 H@sper</strong></p>
     </footer>
-</aside><!-- end of sidebar -->
+</aside>
+<!-- end of sidebar -->
 
 <section id="main" class="column">
 
-    <script>
-        if (${alert}==1
-        )
-        {
-
-            alert("Домашнее задание ${message} удалено")
-        }
-        else
-        if (${alert}==2
-        )
-        {
-            alert("Домашнее задание ${message} изменено")
-        }
-    </script>
+    <%-- Notifications--%>
+    <c:if test="${alert == 1}"><h4 class="alert_success">${message}</h4></c:if>
+    <c:if test="${alert == 2}"><h4 class="alert_warning">${message}</h4></c:if>
+    <c:if test="${alert == 3}"><h4 class="alert_error">${message}</h4></c:if>
+    <c:if test="${alert == 4}"><h4 class="alert_info">${message}</h4></c:if>
+    <%-- Notifications--%>
 
     <article class="module width_full">
         <header><h3 class="tabs_involved">Все домашние задания</h3>
         </header>
+        <table class="tablesorter" cellspacing="0">
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Класс</th>
+                <th>Предмет</th>
+                <th>Учитель</th>
+                <th>Описание</th>
+                <th>Действие</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${homeWorks}" var="homeWork">
 
-        <div class="tab_container">
-            <table class="tablesorter" cellspacing="0">
-                <thead>
                 <tr>
-                    <th>Дата</th>
-                    <th>Класс</th>
-                    <th>Предмет</th>
-                    <th>Учитель</th>
-                    <th>Описание</th>
-                    <th>Действие</th>
+                    <td><c:out value="${homeWork.strDate}"/></td>
+                    <td><c:out value="${homeWork.studentsGroup.name}"/></td>
+                    <td><c:out value="${homeWork.subject.name}"/></td>
+                    <td><c:out value="${homeWork.teacher.name} ${homeWork.teacher.surname}"/></td>
+                    <td><c:out value="${homeWork.description}"/></td>
+                    <td><input type="image" src="<c:url value="/images/icn_alert_info.png"/>" data-toggle="modal"
+                               data-target="#modalHomeWorkStatus_${homeWork.id}" title="Статусы"><input type="image"
+                                                                                                        src="<c:url value="/images/icn_edit.png"/>"
+                                                                                                        data-toggle="modal"
+                                                                                                        data-target="#modalHomeWorkEdit_${homeWork.id}"
+                                                                                                        title="Редактировать"><a
+                            href="/homeWork/delete?id=${homeWork.id}"><img src="<c:url value="/images/icn_trash.png"/>"
+                                                                           title="Удалить"></a></td>
                 </tr>
-                </thead>
-                <tbody>
-                <c:forEach items="${homeWorks}" var="homeWork">
+                <!-- Modal edit-->
+                <div class="modal fade" id="modalHomeWorkEdit_${homeWork.id}" role="dialog" tabindex="1" role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
 
-                    <tr>
-                        <td><c:out value="${homeWork.strDate}"/></td>
-                        <td><c:out value="${homeWork.studentsGroup.name}"/></td>
-                        <td><c:out value="${homeWork.subject.name}"/></td>
-                        <td><c:out value="${homeWork.teacher.name} ${homeWork.teacher.surname}"/></td>
-                        <td><c:out value="${homeWork.description}"/></td>
-                        <td><input type="image" src="/images/icn_alert_info.png" data-toggle="modal" data-target="#modalHomeWorkStatus_${homeWork.id}" title="Статусы"><input type="image" src="/images/icn_edit.png" data-toggle="modal" data-target="#modalHomeWorkEdit_${homeWork.id}" title="Редактировать"><a href="/homeWork/delete?id=${homeWork.id}"><img src="/images/icn_trash.png" title="Удалить"></a></td>
-                    </tr>
-                        <!-- Modal edit-->
-                        <div class="modal fade" id="modalHomeWorkEdit_${homeWork.id}" role="dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Редактировать домашнее задание</h4>
-                                    </div>
-                                    <form name="edit_homeWork" action="/homeWork/edit?id=${homeWork.id}" method="POST">
-                                        <div class="modal-body">
-                                            <fieldset style="width:48%; float:left; margin-right: 3%;">
-                                                <label>Предмет</label>
-                                                <select style="width:92%;" name="j_subject">
-                                                    <option value="${homeWork.subject.id}"><c:out
-                                                            value="${homeWork.subject.name}"/></option>
-                                                    <c:forEach items="${subjects}" var="subject">
-                                                        <c:if test="${homeWork.subject.id != subject.id}">
-                                                            <option value="${subject.id}"><c:out
-                                                                    value="${subject.name}"/></option>
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </select>
-                                            </fieldset>
-                                            <fieldset style="width:48%; float:left; ">
-                                                <label>Класс</label>
-                                                <select style="width:92%;" name="j_group">
-                                                    <option value="${homeWork.studentsGroup.id}"><c:out
-                                                            value="${homeWork.studentsGroup.name}"/></option>
-                                                    <c:forEach items="${groups}" var="group">
-                                                        <c:if test="${homeWork.studentsGroup.id!=group.id}">
-                                                            <option value="${group.id}"><c:out
-                                                                    value="${group.name}"/></option>
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </select>
-                                            </fieldset>
-                                            <fieldset style="width:48%; float:left; margin-right: 3%;">
-                                                <label>Учитель</label>
-                                                <select style="width:92%;" name="j_teacher">
-                                                    <option value="${homeWork.teacher.id}"><c:out
-                                                            value="${homeWork.teacher.name} ${homeWork.teacher.surname}"/></option>
-                                                    <c:forEach items="${teachers}" var="teacher">
-                                                        <c:if test="${homeWork.teacher.id!=teacher.id}">
-                                                            <option value="${teacher.id}"><c:out
-                                                                    value="${teacher.name} ${teacher.surname}"/></option>
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </select>
-                                            </fieldset>
-                                            <fieldset style="width:96%; float:left; margin-right: 3%;">
-                                                <label>Описание</label>
-                                                <textarea rows="12" name="j_description"><c:out
-                                                        value="${homeWork.description}"/></textarea>
-                                            </fieldset>
-                                        </div>
-                                        <div class="clear"></div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть
-                                            </button>
-                                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-                                        </div>
-                                    </form>
-                                </div>
-
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Редактировать домашнее задание</h4>
                             </div>
+                            <form class="form-horizontal" role="form" method="post" action="/homeWork/edit?id=${homeWork.id}">
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <fieldset style="width:48%; float:left; margin-right: 3%">
+                                                <div class="col-md-11">
+                                                    <div class="form-group">
+                                                        <label for="inputGroup">Класс</label>
+                                                        <select class="form-control input-sm" id="inputGroup"
+                                                                name="j_group">
+                                                            <option value="${homeWork.studentsGroup.id}"><c:out
+                                                                    value="${homeWork.studentsGroup.name}"/></option>
+                                                            <c:forEach items="${groups}" var="group">
+                                                                <c:if test="${homeWork.studentsGroup.id!=group.id}">
+                                                                    <option value="${group.id}"><c:out
+                                                                            value="${group.name}"/></option>
+                                                                </c:if>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset style="width:48%; float:left;">
+                                                <div class="col-md-11">
+                                                    <div class="form-group">
+                                                        <label for="inputSubject">Предмет</label>
+                                                        <select class="form-control input-sm" id="inputSubject"
+                                                                name="j_subject">
+                                                            <option value="${homeWork.subject.id}"><c:out
+                                                                    value="${homeWork.subject.name}"/></option>
+                                                            <c:forEach items="${subjects}" var="subject">
+                                                                <c:if test="${homeWork.subject.id != subject.id}">
+                                                                    <option value="${subject.id}"><c:out
+                                                                            value="${subject.name}"/></option>
+                                                                </c:if>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="row">
+                                            <fieldset style="width:48%; float:left; margin-right: 3%">
+                                                <div class="col-md-11">
+                                                    <div class="form-group">
+                                                        <label for="inputTeacher">Учитель</label>
+                                                        <select class="form-control input-sm" id="inputTeacher"
+                                                                name="j_teacher">
+                                                            <option value="${homeWork.teacher.id}"><c:out
+                                                                    value="${homeWork.teacher.name} ${homeWork.teacher.surname}"/></option>
+                                                            <c:forEach items="${teachers}" var="teacher">
+                                                                <c:if test="${homeWork.teacher.id!=teacher.id}">
+                                                                    <option value="${teacher.id}"><c:out
+                                                                            value="${teacher.name} ${teacher.surname}"/></option>
+                                                                </c:if>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="row">
+                                            <fieldset style="width:100%; float:left;">
+                                                <div class="col-md-11">
+                                                    <div class="form-group">
+                                                        <label for="inputDescription">Задание</label>
+                                                        <textarea class="form-control input-sm" rows="12" minlength="10"
+                                                                  id="inputDescription" name="j_description"><c:out
+                                                                value="${homeWork.description}"/></textarea>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                </div>
+                            </form>
                         </div>
-                        <!--End Modal Edit-->
+                    </div>
+                </div>
+                <!--End Modal Edit-->
 
-                </c:forEach>
+            </c:forEach>
 
-                </tbody>
-            </table>
+            </tbody>
+        </table>
 
-        </div><!-- end of .tab_container -->
+        <!--Pages -->
+        <ul class="pagination">
+            <c:if test="${curPage == 0}">
+                <li class="disabled"><a href="/admin/homeworks/list?page=0">&laquo;</a></li>
+            </c:if>
+            <c:if test="${curPage > 0}">
+                <li><a href="/admin/homeworks/list?page=0">&laquo;</a></li>
+            </c:if>
+
+            <c:if test="${curPage <= 3}"><c:set var="begin" value="0"/></c:if>
+            <c:if test="${curPage > 3}"><c:set var="begin" value="${curPage-3}"/></c:if>
+
+            <c:forEach var="i" begin="${begin}" end="${totalPages}">
+                <c:if test="${i <= curPage+3}">
+                    <c:if test="${curPage == i}">
+                        <li class="active"><a href="/admin/homeworks/list?page=${i}"><c:out
+                                value="${i+1}"/>
+                            <span class="sr-only">(current)</span></a></li>
+                    </c:if>
+                    <c:if test="${curPage != i}">
+                        <li><a href="/admin/homeworks/list?page=${i}"><c:out value="${i+1}"/> <span
+                                class="sr-only">(current)</span></a></li>
+                    </c:if>
+                </c:if>
+            </c:forEach>
+
+            <c:if test="${curPage == totalPages}">
+                <li class="disabled"><a href="/admin/homeworks/list?page=${totalPages}">&raquo;</a>
+                </li>
+            </c:if>
+            <c:if test="${curPage < totalPages}">
+                <li><a href="/admin/homeworks/list?page=${totalPages}">&raquo;</a></li>
+            </c:if>
+        </ul>
+        <!--end Pages -->
 
     </article><!-- end of content manager article -->
 
 </section>
 
+<script src="/js/validator/jquery.min.js"></script>
+<script src="/js/validator/bootstrap.min.js"></script>
+<script src="/js/validator/common.js"></script>
 </body>
-
+<%--Statuses--%>
 <c:forEach items="${homeWorks}" var="homeWork">
     <!-- Modal status -->
     <div class="modal fade" id="modalHomeWorkStatus_${homeWork.id}" role="dialog">
@@ -298,6 +364,5 @@
         </div>
     </div>
     <%--End Modal Status--%>
-    </c:forEach>
-
+</c:forEach>
 </html>

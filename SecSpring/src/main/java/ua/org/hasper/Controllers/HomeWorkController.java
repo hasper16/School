@@ -1,7 +1,9 @@
 package ua.org.hasper.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.expression.ParseException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ import ua.org.hasper.service.SubjectService;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static java.util.Calendar.DAY_OF_MONTH;
+
 /**
  * Created by Pavel.Eremenko on 04.01.2017.
  */
@@ -33,176 +37,117 @@ public class HomeWorkController {
     @Autowired
     private HomeWorkStudentStatusService homeWorkStudentStatusService;
 
-    @RequestMapping(value = "/homework_filter", method = RequestMethod.POST)
-    public ModelAndView seatchHomeWork(@RequestParam(value = "j_subject") String subject,
+    private Subject subject;
+    private Calendar startDate = new GregorianCalendar(2016,1,1);
+    private Calendar endDate = new GregorianCalendar();
+
+    private HomeWorkStatus homeWorkStatus;
+    int PAGESIZE = 25;
+    int curPage=0;
+
+    @RequestMapping(value = "/homework", method = RequestMethod.POST)
+    public ModelAndView seatchHomeWork(@RequestParam(value = "j_subject") Integer subjectId,
                                        @RequestParam(value = "j_status") String status,
                                        @RequestParam(value = "j_sdt") String sdt,
                                        @RequestParam(value = "j_edt") String edt,
                                        Model model) throws ParseException, java.text.ParseException {
-        ;
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         model.addAttribute("login", user.getUsername());
-
-        //Список предметов для отображения
-        List<Subject> subjects = subjectService.getAllSubjects();
-        Set<String> subject_list = new LinkedHashSet<>();
-        subject_list.add(subject);
-        subject_list.add("Все");
-        for (Subject s : subjects) {
-            subject_list.add(s.getName());
-        }
-
-        model.addAttribute("subject", subject_list);
-        //Список предметов для отображения
-
-        //Список статусов для отображения
-        Set<String> status_list = new LinkedHashSet<>();
-        status_list.add(status);
-        status_list.add("Все");
-        for (HomeWorkStatus s : HomeWorkStatus.values()) {
-            status_list.add(s.toString());
-        }
-        model.addAttribute("hmstatus", status_list);
-        //Список статусов для отображения
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar enddate = new GregorianCalendar();
-        Calendar startDate = new GregorianCalendar();
-        startDate.setTime(dateFormat.parse(sdt));
-        enddate.setTime(dateFormat.parse(edt));
-        enddate.add(Calendar.HOUR_OF_DAY, 24);
-        enddate.add(Calendar.SECOND, -1);
-
-        Subject fSubject = subjectService.findByName(subject);
-
-        HomeWorkStatus fStatus = null;
-        for (HomeWorkStatus h : HomeWorkStatus.values()) {
-            if (h.toString().equals(status)) {
-                fStatus = h;
-            }
-        }
-
-        model.addAttribute("end_date", edt);
-        model.addAttribute("start_date", sdt);
-
-        List<HomeWorkStudentStatus> homeWorkStudentStatuses = new LinkedList<>();
 
         Student student = studentService.getStudentByLogin(user.getUsername());
+        subject = subjectService.findById((subjectId == null) ? 0 : subjectId);
+        homeWorkStatus = HomeWorkStatus.getStatusFromName(status);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        startDate.setTime(dateFormat.parse(sdt));
+        endDate.setTime(dateFormat.parse(edt));
 
-        if (fStatus != null && fSubject != null) {
-            homeWorkStudentStatuses = homeWorkStudentStatusService.findByStudentSubjectStatusDate(student, fSubject, fStatus, startDate, enddate);
-        } else if (fStatus == null && fSubject != null) {
-            homeWorkStudentStatuses = homeWorkStudentStatusService.findByStudentSubjectDate(student, fSubject, startDate, enddate);
-        } else if (fStatus != null && fSubject == null) {
-            homeWorkStudentStatuses = homeWorkStudentStatusService.findByStudentStatusDate(student, fStatus, startDate, enddate);
-        } else {
-            homeWorkStudentStatuses = homeWorkStudentStatusService.findByStudentDate(student, startDate, enddate);
-        }
-
-
-        model.addAttribute("homeworks", homeWorkStudentStatuses);
-
-        return new ModelAndView("homework");
-
+        return list(subject, startDate, endDate, homeWorkStatus,0, model);
     }
 
-    @RequestMapping(value = "/homework", method = RequestMethod.POST)
-    public ModelAndView updateStatusHomeWork(@RequestParam(value = "j_id") String id,
-                                             @RequestParam(value = "j_status") String status,
-                                             @RequestParam(value = "home_work_seach.j_sdt") String sdt,
-                                             Model model) throws ParseException {
-
-        HomeWorkStudentStatus homeWorkStudentStatus = homeWorkStudentStatusService.findById(Integer.parseInt(id));
-        HomeWorkStatus newStatus = null;
-        for (HomeWorkStatus h : HomeWorkStatus.values()) {
-            if (h.toString().equals(status)) {
-                newStatus = h;
-            }
-        }
-        homeWorkStudentStatus.setStatus(newStatus);
+    @RequestMapping(value = "/homework_", method = RequestMethod.POST)
+    public ModelAndView updateStatusHomeWork(@RequestParam(value = "id") int id,
+                                             @RequestParam(value = "j_hwStatus") String status,
+                                             Model model) {
+        HomeWorkStudentStatus homeWorkStudentStatus = homeWorkStudentStatusService.findById(id);
+        homeWorkStudentStatus.setStatus(HomeWorkStatus.getStatusFromName(status));
         homeWorkStudentStatusService.saveOrUpdateHomeWorkStudentStatus(homeWorkStudentStatus);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        model.addAttribute("login", user.getUsername());
-
-        //Список предметов для отображения
-        List<Subject> subjects = subjectService.getAllSubjects();
-        Set<String> subject_list = new LinkedHashSet<>();
-        subject_list.add("Все");
-        for (Subject s : subjects) {
-            subject_list.add(s.getName());
-        }
-
-        //model.addAttribute("subject",subject_list);
-        //Список предметов для отображения
-
-        //Список статусов для отображения
-        Set<String> status_list = new LinkedHashSet<>();
-        status_list.add("Все");
-        for (HomeWorkStatus s : HomeWorkStatus.values()) {
-            status_list.add(s.toString());
-        }
-        //model.addAttribute("hmstatus" ,status_list);
-        //Список статусов для отображения
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar sysdate = new GregorianCalendar();
-        Calendar startDate = new GregorianCalendar();
-        startDate.add(Calendar.DAY_OF_YEAR, -7);
-
-        /*model.addAttribute("end_date",dateFormat.format(sysdate.getTime()));
-        model.addAttribute("start_date",dateFormat.format(startDate.getTime()));*/
-
-        List<HomeWorkStudentStatus> homeWorkStudentStatuses = new LinkedList<>();
-        homeWorkStudentStatuses = homeWorkStudentStatusService.findByStudentDate(studentService.getStudentByLogin(user.getUsername()), startDate, sysdate);
-
-        model.addAttribute("homeworks", homeWorkStudentStatuses);
-
-        return new ModelAndView("homework");
+        return list(subject, startDate, endDate, homeWorkStatus,curPage, model);
 
     }
 
     @RequestMapping("/homework")
-    public String homework(Model model) {
+    public ModelAndView homework(Model model) {
+        startDate = new GregorianCalendar();
+        endDate = new GregorianCalendar();
+        startDate.add(DAY_OF_MONTH, -7);
+        return list(null, startDate, endDate, null,0, model);
+    }
+    @RequestMapping(value = "/homework_", params = {"page"})
+    public ModelAndView homeworkPage(@RequestParam (value = "page") int page,Model model){
+
+
+        return list(subject,startDate,endDate,homeWorkStatus,page,model);
+    }
+
+    public ModelAndView list( Subject subject, Calendar startDate, Calendar endDate, HomeWorkStatus workStatus, int page,Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         model.addAttribute("login", user.getUsername());
-
-        //Список предметов для отображения
-        List<Subject> subjects = subjectService.getAllSubjects();
-        Set<String> subject_list = new LinkedHashSet<>();
-        subject_list.add("Все");
-        for (Subject s : subjects) {
-            subject_list.add(s.getName());
+        Student student = studentService.getStudentByLogin(user.getUsername());
+        List<Subject> subjects;
+        if (subject == null) {
+            subjects = subjectService.getAllSubjects();
+        } else {
+            subjects = new LinkedList<>();
+            subjects.add(subject);
         }
-
-        model.addAttribute("subject", subject_list);
-        //Список предметов для отображения
-
-        //Список статусов для отображения
-        Set<String> status_list = new LinkedHashSet<>();
-        status_list.add("Все");
-        for (HomeWorkStatus s : HomeWorkStatus.values()) {
-            status_list.add(s.toString());
-        }
-        model.addAttribute("hmstatus", status_list);
-        //Список статусов для отображения
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar sysdate = new GregorianCalendar();
-        Calendar startDate = new GregorianCalendar();
-        startDate.add(Calendar.DAY_OF_YEAR, -7);
+        String sdt = dateFormat.format(startDate.getTime());
+        String edt = dateFormat.format(endDate.getTime());
 
-        model.addAttribute("end_date", dateFormat.format(sysdate.getTime()));
-        model.addAttribute("start_date", dateFormat.format(startDate.getTime()));
+        List<HomeWorkStudentStatus> homeWorkStudentStatuses;
+        Page<HomeWorkStudentStatus>homeWorkStudentStatusPage;
+        curPage=page;
+        int totalPages=0;
+        if (workStatus == null) {
+            if (subject == null) {
+                homeWorkStudentStatusPage =
+                        homeWorkStudentStatusService.findByStudentDate(student, startDate, endDate,page,PAGESIZE);
 
-        List<HomeWorkStudentStatus> homeWorkStudentStatuses = new LinkedList<>();
-        homeWorkStudentStatuses = homeWorkStudentStatusService.findByStudentDate(studentService.getStudentByLogin(user.getUsername()), startDate, sysdate);
+            } else {
+                homeWorkStudentStatusPage = homeWorkStudentStatusService.findByStudentSubjectDate(student, subject, startDate, endDate,page,PAGESIZE);
+            }
+        } else {
+            if (subject == null) {
+                homeWorkStudentStatusPage = homeWorkStudentStatusService.findByStudentStatusDate(student, workStatus, startDate, endDate,page,PAGESIZE);
+            } else {
+                homeWorkStudentStatusPage = homeWorkStudentStatusService.findByStudentSubjectStatusDate(student, subject, workStatus, startDate, endDate,page,PAGESIZE);
+            }
+
+        }
+        totalPages=homeWorkStudentStatusPage.getTotalPages();
+        homeWorkStudentStatuses=homeWorkStudentStatusPage.getContent();
 
         model.addAttribute("homeworks", homeWorkStudentStatuses);
+        model.addAttribute("subjects", subjects);
+        model.addAttribute("statusList", HomeWorkStatus.values());
+        model.addAttribute("hmstatus", HomeWorkStatus.values());
+        model.addAttribute("curStatus", workStatus);
+        model.addAttribute("subject", subject);
+        model.addAttribute("start_date", sdt);
+        model.addAttribute("end_date", edt);
+        model.addAttribute("curPage",curPage);
+        model.addAttribute("totalPages",totalPages);
 
-        return "homework";
+        Collection<GrantedAuthority> roles = user.getAuthorities();
+        for (GrantedAuthority ga:
+                roles) {
+           if(!ga.getAuthority().equals("ROLE_ADMIN") && !ga.getAuthority().equals("ROLE_TEACHER")){
+                model.addAttribute("noAdminHide","class=\"hide\"");
+            }
+        }
+
+        return new ModelAndView("homework");
     }
 }

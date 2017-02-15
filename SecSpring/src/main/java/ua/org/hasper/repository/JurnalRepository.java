@@ -1,5 +1,7 @@
 package ua.org.hasper.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -7,7 +9,6 @@ import ua.org.hasper.Entity.*;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Pavel.Eremenko on 29.08.2016.
@@ -25,8 +26,11 @@ public interface JurnalRepository extends JpaRepository<Jurnal,Long> {
     @Query("SELECT u FROM Jurnal u where u.student=:student")
     List<Jurnal> findByStudent (@Param("student") Student student);
 
-    @Query("SELECT u FROM Jurnal u where u.studentsGroup=:group")
+    @Query("SELECT u FROM Jurnal u where u.student.studentsGroup=:group")
     List<Jurnal> findByGroup (@Param("group")StudentsGroup studentsGroup);
+
+    @Query("SELECT u FROM Jurnal u where u.student.studentsGroup=:group")
+    Page<Jurnal> findByGroup (@Param("group")StudentsGroup studentsGroup, Pageable pageable);
 
     @Query("SELECT u FROM Jurnal u where u.subject=:subject")
     List<Jurnal> findBySubject (@Param("subject") Subject subject);

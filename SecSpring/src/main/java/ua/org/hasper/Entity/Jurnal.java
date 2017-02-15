@@ -1,9 +1,5 @@
 package ua.org.hasper.Entity;
 
-import javafx.collections.transformation.SortedList;
-import ua.org.hasper.Entity.Enums.Mark;
-import ua.org.hasper.Entity.Enums.MarkType;
-
 import javax.persistence.*;
 import java.util.*;
 
@@ -16,33 +12,29 @@ public class Jurnal {
     @GeneratedValue
     private int id;
 
-    @ManyToOne()
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    @OneToOne
-    @JoinColumn(name = "group_id")
-    private StudentsGroup studentsGroup;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "teach_id")
     private Teacher teacher;
 
     @OneToMany(mappedBy = "jurnal",cascade = CascadeType.ALL)
     private List<MarkStamp> markStamps = new LinkedList<>();
 
-    @OneToOne//(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
     public Jurnal() {
     }
 
-    public Jurnal(Subject subject, StudentsGroup studentsGroup, Teacher teacher, MarkStamp markStamp, Student student) {
-        this.subject = subject;
-        this.studentsGroup = studentsGroup;
-        this.teacher = teacher;
+    public Jurnal(Subject subject,Teacher teacher, MarkStamp markStamp, Student student) {
+        setSubject(subject);
+        setTeacher(teacher);
         markStamp.setJurnal(this);
-        this.student = student;
+        setStudent(student);
     }
 
     public Subject getSubject() {
@@ -51,14 +43,11 @@ public class Jurnal {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
+        subject.getJurnals().add(this);
     }
 
     public StudentsGroup getStudentsGroup() {
-        return studentsGroup;
-    }
-
-    public void setStudentsGroup(StudentsGroup studentsGroup) {
-        this.studentsGroup = studentsGroup;
+        return this.student.getStudentsGroup();
     }
 
     public Teacher getTeacher() {
@@ -67,6 +56,7 @@ public class Jurnal {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+        teacher.getJurnals().add(this);
     }
 
     public List<MarkStamp> getMarkStamps() {
@@ -87,6 +77,7 @@ public class Jurnal {
 
     public void setStudent(Student student) {
         this.student = student;
+        student.getJurnals().add(this);
     }
 }
 

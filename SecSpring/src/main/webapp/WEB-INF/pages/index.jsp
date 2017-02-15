@@ -9,40 +9,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shool</title>
 
-    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css" />
-    <link rel="stylesheet" href="/css/assets/ie10-viewport-bug-workaround.css" type="text/css" />
-    <link rel="stylesheet" href="/css/jumbotron.css" type="text/css" />
-    <link rel="stylesheet" href="/css/footer.css" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/bootstrap.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/assets/ie10-viewport-bug-workaround.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/jumbotron.css"/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value="/css/footer.css"/>" type="text/css" />
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">School</a>
+            <a class="navbar-brand" href="<c:url value="/"/>">School</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <!-- <li class="active"><a href="#">Ссылка</a></li>-->
-                <li><a href="/homework">Домашние задания</a></li>
-                <li><a href="/schedule">Расписание уроков</a></li>
-                <li><a href="/journal">Журнал</a></li>
+                <li><a href="<c:url value="/homework"/>">Домашние задания</a></li>
+                <li><a href="<c:url value="/schedule"/>">Расписание уроков</a></li>
+                <li><a href="<c:url value="/journal"/>">Журнал</a></li>
+                <li ${noAdminHide}><a href="<c:url value="/admin/"/>">Учительская</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right"> <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">${login} <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="/profile">Профиль</a></li>
+                    <li><a href="<c:url value="/profile"/>">Профиль</a></li>
                 </ul>
             </li></ul>
             <c:url value="/logout" var="logoutUrl" />
@@ -52,34 +58,52 @@
         </div>
 
     </div>
-</nav>
+</div>
 
 
 <div class="jumbotron">
     <div class="container">
-        <h1>Рейтинг учеников</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+        <div class="col-md-3">
+            <h2 class="text-center">Всего заданий</h2>
+            <h3 class="text-center">${countHomeWorks}</h3>
+        </div>
+        <div class="col-md-3">
+            <h2 class="text-center">Всего классов</h2>
+            <h3 class="text-center">${countGroups}</h3>
+        </div>
+        <div class="col-md-3">
+            <h2 class="text-center">Всего студентов</h2>
+            <h3 class="text-center">${countStudents}</h3>
+        </div>
+        <div class="col-md-3">
+            <h2 class="text-center">Всего оценок</h2>
+            <h3 class="text-center">${countMarks}</h3>
+        </div>
     </div>
 </div>
 
 <div class="container">
     <!-- Example row of columns -->
     <div class="row">
-        <div class="col-md-4">
-            <h2>Heading</h2>
-            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <div class="col-md-6">
+            <h2 class="text-center">Топ 5 студентов</h2>
+            <c:forEach items="${top5Students}" var="st">
+            <table style="margin-left: 35%;">
+                <td><img src="/image/${st.photo.id}" class="img-responsive" style="height: 20px;"></td>
+                <td><h4 style="margin-left: 5px;"><c:out value="${st.name} ${st.surname}"/></h4></td>
+            </table>
+            </c:forEach>
         </div>
-        <div class="col-md-4">
-            <h2>Heading</h2>
-            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Heading</h2>
-            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <div class="col-md-6">
+            <h2 class="text-center">Топ 5 классов</h2>
+            <c:forEach items="${top5Groups}" var="g">
+                <table style="margin-left: 45%;">
+                    <td><span class="glyphicon glyphicon-certificate"></span></td>
+                    <td><h4 style="margin-left: 5px;"><c:out value="${g.name}"/></h4></td>
+                </table>
+            </c:forEach>
+           
+
         </div>
     </div>
 
@@ -87,16 +111,12 @@
 
 
 </div> <!-- /container -->
-<div id="footer">
+<div class="footer">
     <div class="container">
         <p class="text-muted">Create by H@sper</p>
     </div>
 </div>
 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
 </body>
 </html>

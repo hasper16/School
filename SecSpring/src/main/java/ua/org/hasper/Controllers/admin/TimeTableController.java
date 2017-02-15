@@ -14,7 +14,6 @@ import ua.org.hasper.Entity.Enums.WeekDayName;
 import ua.org.hasper.service.*;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Pavel.Eremenko on 11.01.2017.
@@ -31,6 +30,11 @@ public class TimeTableController {
     private ScheduleTimesService scheduleTimesService;
     @Autowired
     private ScheduleService scheduleService;
+
+    private List<Schedule> schedules;
+    private WeekDayName weekDayName;
+    private int maxCountSchedule = 0;
+    private int PAGESIZE = 25;
 
     @RequestMapping("admin/timetable/add")
     public ModelAndView add(Model model) {
@@ -63,100 +67,160 @@ public class TimeTableController {
         StudentsGroup studentsGroup = groupService.getGroupById(groupId);
         Subject subject = subjectService.findById(subjectId);
         Teacher teacher = teacherService.findById(teacherId);
-        WeekDayName weekDayName = WeekDayName.valueOf(weekday);
+        WeekDayName weekDayName = WeekDayName.getDayByName(weekday);
         ScheduleTimes scheduleTimes = scheduleTimesService.findById(timeId);
 
-        Schedule schedule = new Schedule(subject, teacher, studentsGroup, weekDayName, scheduleTimes);
+        int alert = 0;
+        String message = "";
 
-        scheduleService.addOrUpdateSchedule(schedule);
+        try {
+            for (Schedule sh :
+                    scheduleService.findAll()) {
+                if (sh.getStudentsGroup().equals(studentsGroup) &&
+                        sh.getSubject().equals(subject) &&
+                        sh.getTeacher().equals(teacher) &&
+                        sh.getWeekDayName().equals(weekDayName) &&
+                        sh.getScheduleTimes().equals(scheduleTimes)) {
+                    alert = 2;
+                    message = "Такое расписание уже существует";
+                } else {
+                    Schedule schedule = new Schedule(subject, teacher, studentsGroup, weekDayName, scheduleTimes);
+                    scheduleService.addOrUpdateSchedule(schedule);
+                    alert = 1;
+                    message = "Расписание " + schedule.getScheduleTimes().getLessonNum() + ") " + schedule.getScheduleTimes().getSdt() + " "
+                            + schedule.getWeekDayName().toString() + " "
+                            + schedule.getSubject().getName() + " "
+                            + schedule.getStudentsGroup().getName() + " "
+                            + schedule.getTeacher().getName() + " " +schedule.getTeacher().getSurname() + " успешно создано";
+                }
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
+        model.addAttribute("alert", alert);
+        model.addAttribute("message", message);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
-        model.addAttribute("addStatus", 1);
-
-        return new ModelAndView("admin/timetable/add");
+        return add(model);
     }
 
     @RequestMapping("admin/timetable/list")
-    public void list(Model model) {
+    public ModelAndView list(Model model) {
+        return filterList(WeekDayName.Monday, 0, model);
+    }
+
+    public ModelAndView pageElements(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
-
-        List<Schedule> schedules1 = scheduleService.findByWeekDayName(WeekDayName.Monday);
-        List<Schedule> schedules2 = scheduleService.findByWeekDayName(WeekDayName.Tuesday);
-        List<Schedule> schedules3 = scheduleService.findByWeekDayName(WeekDayName.Wednesday);
-        List<Schedule> schedules4 = scheduleService.findByWeekDayName(WeekDayName.Thursday);
-        List<Schedule> schedules5 = scheduleService.findByWeekDayName(WeekDayName.Friday);
-        List<Schedule> schedules6 = scheduleService.findByWeekDayName(WeekDayName.Saturday);
-        List<Schedule> schedules7 = scheduleService.findByWeekDayName(WeekDayName.Wednesday);
-
-        model.addAttribute("schedule1", schedules1);
-        model.addAttribute("schedule2", schedules2);
-        model.addAttribute("schedule3", schedules3);
-        model.addAttribute("schedule4", schedules4);
-        model.addAttribute("schedule5", schedules5);
-        model.addAttribute("schedule6", schedules6);
-        model.addAttribute("schedule7", schedules7);
-
+        model.addAttribute("weekDayName", WeekDayName.values());
         List<Subject> subjects = subjectService.getAllSubjects();
         List<StudentsGroup> studentsGroups = groupService.getAllGroups();
         List<Teacher> teachers = teacherService.getAllTeachers();
+        List<ScheduleTimes> scheduleTimes = scheduleTimesService.getAll();
 
         model.addAttribute("subjects", subjects);
         model.addAttribute("groups", studentsGroups);
         model.addAttribute("teachers", teachers);
+        model.addAttribute("times", scheduleTimes);
+        model.addAttribute("weekdays", WeekDayName.values());
+        return new ModelAndView("admin/timetable/list");
+    }
+
+    @RequestMapping("/schedule/")
+    public ModelAndView filterList(@RequestParam(value = "weekDay") WeekDayName weekDay,
+                                   @RequestParam(value = "page") int page,
+                                   Model model) {
+        weekDayName = weekDay;
+        schedules = scheduleService.findByWeekDayName(weekDayName, page, PAGESIZE);
+        maxCountSchedule = scheduleService.findByWeekDayName(weekDayName).size() / PAGESIZE;
+        model.addAttribute("schedules", schedules);
+        model.addAttribute("maxCountScheduleRows", maxCountSchedule);
+        model.addAttribute("curWeekDay", weekDayName);
+        model.addAttribute("curPage", page);
+
+        return pageElements(model);
 
     }
 
-
     @RequestMapping("/schedule/delete")
     public ModelAndView deleteSchedule(@RequestParam(value = "id") int id, Model model) {
-        Schedule schedule = scheduleService.findById(id);
-        String message = schedule.getWeekDayName().name()
-                + " " + schedule.getStudentsGroup().getName() + " "
-                + schedule.getSubject().getName() + " "
-                + schedule.getScheduleTimes().getSdt();
-        scheduleService.delSchedule(schedule);
-
+        int alert = 0;
+        String message = "";
+        try {
+            Schedule schedule = scheduleService.findById(id);
+            scheduleService.delSchedule(schedule);
+            message = "Расписание " + schedule.getScheduleTimes().getLessonNum() + ") " + schedule.getScheduleTimes().getSdt() + " "
+                    + schedule.getWeekDayName().toString() + " "
+                    + schedule.getSubject().getName() + " "
+                    + schedule.getStudentsGroup().getName() + " "
+                    + schedule.getTeacher().getName() + " " +schedule.getTeacher().getSurname() + " успешно удалено";
+            alert = 1;
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
 
         model.addAttribute("message", message);
-        model.addAttribute("alert", 1);
+        model.addAttribute("alert", alert);
 
-        list(model);
-        return new ModelAndView("admin/timetable/list");
+        return list(model);
 
     }
 
     @RequestMapping("/schedule/edit")
     public ModelAndView editTeacher(@RequestParam(value = "id") int id,
-                                    @RequestParam(value = "j_lessonNum") int lessonNum,
+                                    @RequestParam(value = "j_lessonNum") int lessonNumId,
                                     @RequestParam(value = "j_subject") int subjectId,
                                     @RequestParam(value = "j_group") int groupId,
                                     @RequestParam(value = "j_teacher") int teacherId,
                                     @RequestParam(value = "j_duration") int durationMin,
-                                    Model model){
-Schedule schedule=scheduleService.findById(id);
-
-        Subject subject=subjectService.findById(subjectId);
+                                    @RequestParam(value = "j_weekday") String weekday,
+                                    Model model) {
+        Schedule schedule = scheduleService.findById(id);
+        Subject subject = subjectService.findById(subjectId);
         StudentsGroup studentsGroup = groupService.getGroupById(groupId);
         Teacher teacher = teacherService.findById(teacherId);
+        ScheduleTimes scheduleTimes = scheduleTimesService.findById(lessonNumId);
 
-        schedule.getScheduleTimes().setLessonNum(lessonNum);
-        schedule.setSubject(subject);
-        schedule.setStudentsGroup(studentsGroup);
-        schedule.setTeacher(teacher);
-        schedule.getScheduleTimes().setDurationMin(durationMin);
+        int alert = 0;
+        String message = "";
 
-        String message = schedule.getWeekDayName().name()
-                + " " + schedule.getStudentsGroup().getName() + " "
-                + schedule.getSubject().getName() + " "
-                + schedule.getScheduleTimes().getSdt();
+        try {
+            for (Schedule sh :
+                    scheduleService.findAll()) {
+                if (sh.getStudentsGroup().equals(studentsGroup) &&
+                        sh.getSubject().equals(subject) &&
+                        sh.getTeacher().equals(teacher) &&
+                        sh.getWeekDayName().equals(weekDayName) &&
+                        sh.getScheduleTimes().equals(scheduleTimes) &&
+                        sh.getId() != id) {
+                    alert = 2;
+                    message = "Такое расписание уже существует";
+                }
+            }
+            if(alert!=2) {
+                schedule.setSubject(subject);
+                schedule.setTeacher(teacher);
+                schedule.setStudentsGroup(studentsGroup);
+                schedule.setWeekDayName(weekDayName);
+                schedule.setScheduleTimes(scheduleTimes);
+                scheduleService.addOrUpdateSchedule(schedule);
+                alert = 1;
+                message = "Расписание " + schedule.getScheduleTimes().getLessonNum() + ") " + schedule.getScheduleTimes().getSdt() + " "
+                        + schedule.getWeekDayName().toString() + " "
+                        + schedule.getSubject().getName() + " "
+                        + schedule.getStudentsGroup().getName() + " "
+                        + schedule.getTeacher().getName() + " " +schedule.getTeacher().getSurname() + " успешно изменено";
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
+        model.addAttribute("alert", alert);
         model.addAttribute("message", message);
-        model.addAttribute("alert", 2);
 
-        list(model);
 
-        return new ModelAndView("admin/timetable/list");
+        return list(model);
 
     }
 }

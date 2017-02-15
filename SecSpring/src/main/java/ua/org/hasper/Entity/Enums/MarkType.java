@@ -16,7 +16,7 @@ public enum MarkType {
     public String toString (){
         return name;
     }
-    public static MarkType markTypeFromString (String name){
+    public static MarkType markTypeByName(String name){
         MarkType tmp = null;
         for (MarkType mt:
              MarkType.values()) {

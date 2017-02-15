@@ -1,11 +1,14 @@
 package ua.org.hasper.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.hasper.Entity.*;
 import ua.org.hasper.repository.HomeWorkRepository;
 import ua.org.hasper.service.HomeWorkService;
+import ua.org.hasper.service.HomeWorkStudentStatusService;
 
 import java.util.Calendar;
 import java.util.List;
@@ -16,18 +19,32 @@ import java.util.List;
 @Service
 public class HomeWorkServiceImpl implements HomeWorkService {
     @Autowired
-    HomeWorkRepository homeWorkRepository;
+    private HomeWorkRepository homeWorkRepository;
+
 
     @Override
     @Transactional
     public void addOrUpdateHomeWork(HomeWork homeWork) {
-        homeWorkRepository.save(homeWork);
+        homeWorkRepository.saveAndFlush(homeWork);
+    }
+
+    @Override
+    @Transactional
+    public void addOrUpdateHomeWorks(List<HomeWork> homeWorks) {
+        homeWorkRepository.save(homeWorks);
     }
 
     @Override
     @Transactional
     public void delHomeWork(HomeWork homeWork) {
+
         homeWorkRepository.delete(homeWork);
+    }
+
+    @Override
+    @Transactional
+    public void delHomeWorks(List<HomeWork> homeWorks) {
+        homeWorkRepository.delete(homeWorks);
     }
 
     @Override
@@ -59,17 +76,28 @@ public class HomeWorkServiceImpl implements HomeWorkService {
 
     @Override
     @Transactional
-    public List<HomeWork> findAll (){
+    public List<HomeWork> findAll() {
         return homeWorkRepository.findAll();
     }
 
     @Override
     @Transactional
-    public HomeWork findById(int id){
+    public Page<HomeWork> findAll(int page, int pageSize) {
+        return homeWorkRepository.findAll(new PageRequest(page,pageSize));
+    }
+
+    @Override
+    @Transactional
+    public HomeWork findById(int id) {
         return homeWorkRepository.findById(id);
     }
 
-
-
+    @Override
+    @Transactional
+    public Integer countHomeWorks(){
+        Long count = homeWorkRepository.count();
+        Integer res = count.intValue();
+        return res;
+    }
 
 }

@@ -1,7 +1,7 @@
 package ua.org.hasper.service.impl;
 
-import org.hibernate.annotations.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.hasper.Entity.Enums.WeekDayName;
@@ -30,8 +30,25 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     @Transactional
+    public void addOrUpdateSchedules(List<Schedule> schedules){
+        scheduleRepository.save(schedules);
+    }
+
+    @Override
+    @Transactional
     public void delSchedule(Schedule schedule) {
 scheduleRepository.delete(schedule);
+    }
+    @Override
+    @Transactional
+    public void delSchedules(List<Schedule> schedules){
+        scheduleRepository.delete(schedules);
+    }
+
+    @Override
+    @Transactional
+    public List<Schedule> findByWeekDayName (WeekDayName weekDayName,int page, int pageSize){
+        return  scheduleRepository.findByWeekDayName(weekDayName,new PageRequest(page,pageSize));
     }
 
     @Override

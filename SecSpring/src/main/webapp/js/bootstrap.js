@@ -443,7 +443,8 @@ if (typeof jQuery === 'undefined') {
     var slidEvent = $.Event('slid.bs.carousel', { relatedTarget: relatedTarget, direction: direction }) // yes, "slid"
     if ($.support.transition && this.$element.hasClass('slide')) {
       $next.addClass(type)
-      $next[0].offsetWidth // force reflow
+      //noinspection BadExpressionStatementJS
+        $next[0].offsetWidth // force reflow
       $active.addClass(direction)
       $next.addClass(direction)
       $active
@@ -640,7 +641,8 @@ if (typeof jQuery === 'undefined') {
 
     var dimension = this.dimension()
 
-    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+    //noinspection BadExpressionStatementJS
+      this.$element[dimension](this.$element[dimension]())[0].offsetHeight
 
     this.$element
       .addClass('collapsing')
@@ -1003,7 +1005,8 @@ if (typeof jQuery === 'undefined') {
       that.adjustDialog()
 
       if (transition) {
-        that.$element[0].offsetWidth // force reflow
+        //noinspection BadExpressionStatementJS
+          that.$element[0].offsetWidth // force reflow
       }
 
       that.$element.addClass('in')
@@ -1120,7 +1123,9 @@ if (typeof jQuery === 'undefined') {
           : this.hide()
       }, this))
 
-      if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
+      if (doAnimate) { //noinspection BadExpressionStatementJS
+          this.$backdrop[0].offsetWidth
+      } // force reflow
 
       this.$backdrop.addClass('in')
 
@@ -2143,7 +2148,8 @@ if (typeof jQuery === 'undefined') {
           .attr('aria-expanded', true)
 
       if (transition) {
-        element[0].offsetWidth // reflow for transition
+        //noinspection BadExpressionStatementJS
+          element[0].offsetWidth // reflow for transition
         element.addClass('in')
       } else {
         element.removeClass('fade')

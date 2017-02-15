@@ -1,7 +1,5 @@
 package ua.org.hasper.Entity.Enums;
 
-import java.util.*;
-
 /**
  * Created by Pavel.Eremenko on 26.08.2016.
  */
@@ -23,6 +21,16 @@ public enum HomeWorkStatus {
         return name;
     }
     public String getTableClassName(){return tableClassName;}
+    public static HomeWorkStatus getStatusFromName(String name){
+        HomeWorkStatus homeWorkStatus = null;
+        for (HomeWorkStatus s:
+             HomeWorkStatus.values()) {
+            if(s.toString().equals(name)){
+                homeWorkStatus=s;
+            }
+        }
+        return homeWorkStatus;
+    }
 
 
 }

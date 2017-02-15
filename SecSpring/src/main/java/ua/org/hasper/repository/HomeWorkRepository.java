@@ -20,7 +20,7 @@ public interface HomeWorkRepository extends JpaRepository<HomeWork,Long> {
     @Query("SELECT u FROM HomeWork u where u.teacher=:teacher")
     List<HomeWork> findByTeacher (@Param("teacher")Teacher teacher);
 
-    @Query("SELECT u FROM HomeWork u where u.studentsGroup=:group")
+    @Query("SELECT u FROM HomeWork u join u.homeWorkStudentStatuses h where h.student.studentsGroup=:group")
     List<HomeWork> findByGroup (@Param("group")StudentsGroup group);
 
     @Query("SELECT u FROM HomeWork u where u.subject=:subject")

@@ -1,12 +1,15 @@
 package ua.org.hasper.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.hasper.Entity.*;
 import ua.org.hasper.repository.JurnalRepository;
 import ua.org.hasper.service.JurnalService;
 
+import javax.persistence.OneToMany;
 import java.util.*;
 
 /**
@@ -25,8 +28,19 @@ public class JurnalServiceImpl implements JurnalService {
 
     @Override
     @Transactional
+    public void addOrUpdateJurnals(List<Jurnal> jurnals){
+        jurnalRepository.save(jurnals);
+    }
+
+    @Override
+    @Transactional
     public void delJurnal(Jurnal jurnal) { jurnalRepository.delete(jurnal);
 
+    }
+
+    @Override
+    @Transactional
+    public void delJurnals(List<Jurnal> jurnals) { jurnalRepository.delete(jurnals);
     }
 
     @Override
@@ -74,6 +88,12 @@ public class JurnalServiceImpl implements JurnalService {
 
     @Override
     @Transactional
+    public Page<Jurnal> findByGroup (StudentsGroup studentsGroup, int page, int pageSize){
+        return jurnalRepository.findByGroup(studentsGroup,new PageRequest(page,pageSize));
+    }
+
+    @Override
+    @Transactional
     public List<Jurnal> findBySubject (Subject subject){
         return jurnalRepository.findBySubject(subject);
     }
@@ -82,5 +102,11 @@ public class JurnalServiceImpl implements JurnalService {
     @Transactional
     public List<Jurnal> getAllJurnals (){
         return jurnalRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public Page<Jurnal> getAllJurnals (int page, int pageSize){
+        return jurnalRepository.findAll(new PageRequest(page,pageSize));
     }
 }

@@ -13,7 +13,10 @@ import java.util.List;
  */
 public interface ScheduleService {
     void addOrUpdateSchedule(Schedule schedule);
+    void addOrUpdateSchedules(List<Schedule> schedules);
     void delSchedule(Schedule schedule);
+    void delSchedules(List<Schedule> schedules);
+    List<Schedule> findByWeekDayName (WeekDayName weekDayName, int page, int pageSize);
     List<Schedule> findByWeekDayName (WeekDayName weekDayName);
     List<Schedule> findByWeekDayNameNGroup (WeekDayName weekDayName, StudentsGroup studentsGroup);
     List<Schedule> findByTeacher (Teacher teacher);

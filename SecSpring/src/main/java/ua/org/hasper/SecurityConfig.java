@@ -25,6 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.passwordEncoder(getShaPasswordEncoder())
                 .passwordEncoder(bCryptPasswordEncoder);
 
+
     }
 
     @Override
@@ -32,23 +33,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/admin/**").hasAnyRole("ADMIN","TEACHER")
                 .anyRequest().authenticated()
-                .and()
-        .exceptionHandling().accessDeniedPage("/unauthorized")
-                .and()
-        .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/j_spring_security_check")
-                .failureUrl("/login?error")
-                .usernameParameter("j_login")
-                .passwordParameter("j_password")
-                .permitAll()
-                .and()
-        .logout()
-                .permitAll()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .invalidateHttpSession(true);
+                .and().exceptionHandling().accessDeniedPage("/unauthorized")
+                .and().formLogin().defaultSuccessUrl("/", false)
+                .and().formLogin().loginPage("/login").loginProcessingUrl("/j_spring_security_check")
+                .failureUrl("/login?error").usernameParameter("j_login").passwordParameter("j_password").permitAll()
+                .and().logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/login?logout").invalidateHttpSession(true);
+
+
 
     }
 

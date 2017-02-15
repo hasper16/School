@@ -12,16 +12,20 @@ public class CustomUser {
 
     private String login;
     private String password;
-
-
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    Student student;
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    Teacher teacher;
 
     public CustomUser(String login, String password, UserRole role) {
         this.login = login;
         this.password = password;
         this.role = role;
-
+        student=null;
+        teacher=null;
     }
 
     public CustomUser() {}
@@ -46,10 +50,6 @@ public class CustomUser {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public UserRole getRole() {
         return role;
     }
@@ -58,4 +58,19 @@ public class CustomUser {
         this.role = role;
     }
 
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
 }

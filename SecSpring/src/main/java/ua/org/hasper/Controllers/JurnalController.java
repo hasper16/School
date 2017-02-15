@@ -1,6 +1,7 @@
 package ua.org.hasper.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -29,202 +30,111 @@ public class JurnalController {
     private JurnalService jurnalService;
 
     @RequestMapping("/journal")
-    public String journal(Model model) {
+    public ModelAndView journal (Model model){
+        Calendar startDate = new GregorianCalendar();
+        startDate.add(Calendar.DAY_OF_MONTH,-6);
+        Date endDate = new Date();
+        return list(null,startDate.getTime(),endDate,model);
+    }
+    public ModelAndView list (Subject subject, Date startDate,Date endDate, Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        model.addAttribute("login", user.getUsername());
+        Calendar sdt = new GregorianCalendar();
+        sdt.setTime(startDate);
+        Calendar edt = new GregorianCalendar();
+        edt.setTime(endDate);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        Calendar calendar = new GregorianCalendar();
         List<String> headerCalendar = new LinkedList<>();
-        calendar.add(Calendar.DAY_OF_WEEK, -6);
+        List<Subject> subjects;
+        List<Jurnal> jurnals = new LinkedList<>();
+        if(subject==null) {
+            jurnals = jurnalService.findByLogin(user.getUsername(), sdt, edt);
+            subjects=subjectService.getAllSubjects();
+        }else{
+            jurnals = jurnalService.findByLoginSubject(user.getUsername(),sdt,edt,subject);
+            subjects  = new LinkedList<>();
+            subjects.add(subject);
+            model.addAttribute("curSubject",subject);
+        }
 
-        for (int i = 1; i <= 7; i++) {
-            String tmp = dateFormat.format(calendar.getTime());
+
+        Calendar dateCounter = new GregorianCalendar();
+        dateCounter.setTime(startDate);
+
+        while(dateCounter.before(edt)) {
+            String tmp = dateFormat.format(dateCounter.getTime());
             headerCalendar.add(tmp);
-            calendar.add(Calendar.DAY_OF_WEEK, 1);
+            dateCounter.add(Calendar.DAY_OF_WEEK, 1);
         }
         model.addAttribute("headerCalendar", headerCalendar);
 
-        Calendar sdt = new GregorianCalendar();
-        sdt.add(Calendar.DAY_OF_WEEK, -6);
-
-        Calendar edt = new GregorianCalendar();
-        /*System.out.println(dateFormat.format(edt));
-        edt.set(Calendar.HOUR_OF_DAY,23);
-        edt.set(Calendar.MINUTE, 59);
-        edt.set(Calendar.SECOND, 59);
-        edt.set(Calendar.MILLISECOND, 999);
-        System.out.println(dateFormat.format(edt));*/
-        Map<Subject, Jurnal> j = new TreeMap<>();
-        String strsdt = dateFormat.format(sdt.getTime());
-        String stredt = dateFormat.format(edt.getTime());
-        j = jurnalService.findByLoginForMap(user.getUsername(), sdt, edt);
-
-        //---------------------------------------------
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-        for (Map.Entry entry :
-                j.entrySet()) {
-            Subject subject = (Subject) entry.getKey();
-            System.out.println(subject.getName());
-            Jurnal jurnal = (Jurnal) entry.getValue();
-            for (MarkStamp markStamp :
-                    jurnal.getMarkStamps()) {
-                String sDate = simpleDateFormat.format(markStamp.getDate().getTime());
-                String sMark = markStamp.getMark().toString();
-                System.out.println(sDate + " - " + sMark);
-            }
-
-        }
-
-        List<Jurnal> jurnals = jurnalService.findByLogin(user.getUsername(), sdt, edt);
-        List<Subject> subjectsT = subjectService.getAllSubjects();
-        Collections.sort(subjectsT);
         String outtbl = "<tr>";
-        for (Subject subject : subjectsT) {
-            outtbl += "<td>" + subject.getName() + "</td>";
-            int st = sdt.getTime().getDate();
-            int en = edt.getTime().getDate();
-            while (st <= en) {
+
+
+        for (Subject s : subjects) {
+            sdt.setTime(startDate);
+            outtbl += "<td>" + s.getName() + "</td>";
+           while (sdt.before(edt)) {
                 outtbl += "<td>";
+
+                int c =0;
                 for (Jurnal jurnal : jurnals) {
+
                     for (MarkStamp markStamp : jurnal.getMarkStamps()) {
-                        if (jurnal.getSubject().equals(subject) && markStamp.getDate().getTime().getDate() == st) {
+                        if (jurnal.getSubject().equals(s) &&
+                                markStamp.getDate().get(Calendar.YEAR)== sdt.get(Calendar.YEAR) &&
+                                markStamp.getDate().get(Calendar.MONTH)== sdt.get(Calendar.MONTH) &&
+                                markStamp.getDate().get(Calendar.DAY_OF_MONTH)== sdt.get(Calendar.DAY_OF_MONTH)) {
+                            if(c++>0){
+                                outtbl+= " / ";
+                            }
                             outtbl += markStamp.getMark().toString();
                         }
                     }
                 }
                 outtbl += "</td>";
-                st++;
+               sdt.add(Calendar.DAY_OF_WEEK, 1);
             }
+
             outtbl += "</tr>";
         }
 
-
-        //-----------------------------------------------
-        /*Calendar cal = new GregorianCalendar();*/
-
-
-
-
-       /* model.addAttribute("jurnal", j);
-*/
-  /*      String outtbl = "<tr>";
-        for (Map.Entry entry:j.entrySet()) {
-            Subject s= (Subject) entry.getKey();
-            Jurnal jj= (Jurnal) entry.getValue();
-            outtbl+="<td>"+s.getName()+"</td>";
-            System.out.print(outtbl);
-            int st = sdt.getTime().getDate();
-            int en = edt.getTime().getDate();
-            while (st!=en) {
-                for (MarkStamp markStamp : jj.getMarkStamps()) {
-                    //Calendar c = (Calendar) entry1.getKey();
-                    outtbl+="<td>";
-                    if (markStamp.getDate().getTime().getDate() == st) {
-                        outtbl += markStamp.getMark().toString();
-                    }
-                    outtbl+="</td>";
-                    st++;
-
-                }
-            }
-            outtbl += "</tr>";
-        }*/
         model.addAttribute("jurtab", outtbl);
+        subjects = subjectService.getAllSubjects();
+        subjects.add(0,null);
+        model.addAttribute("subjects", subjects);
 
+        dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 
-        //Список предметов для отображения
-        List<Subject> subjects = subjectService.getAllSubjects();
-        Set<String> subject_list = new LinkedHashSet<>();
-        subject_list.add("Все");
-        for (Subject s : subjects) {
-            subject_list.add(s.getName());
+        model.addAttribute("end_date", dateFormat.format(edt.getTime()));
+        sdt.setTime(startDate);
+        model.addAttribute("start_date", dateFormat.format(sdt.getTime()));
+        model.addAttribute("login", user.getUsername());
+
+        Collection<GrantedAuthority> roles = user.getAuthorities();
+        for (GrantedAuthority ga:
+                roles) {
+            if(!ga.getAuthority().equals("ROLE_ADMIN") && !ga.getAuthority().equals("ROLE_TEACHER")){
+                model.addAttribute("noAdminHide","class=\"hide\"");
+            }
         }
 
-        model.addAttribute("subject", subject_list);
-        //Список предметов для отображения
-        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
-        model.addAttribute("end_date", dateFormat1.format(edt.getTime()));
-        model.addAttribute("start_date", dateFormat1.format(sdt.getTime()));
-        return "journal";
+        return new ModelAndView("journal");
     }
 
-    @RequestMapping(value = "/journal_filter", method = RequestMethod.POST)
-    public ModelAndView filterJurnal(@RequestParam("j_subject") String sub,
+    @RequestMapping(value = "/journal", method = RequestMethod.POST)
+    public ModelAndView filterJurnal(@RequestParam("j_subject") Integer subjectId,
                                      @RequestParam(value = "j_sdt") String sdt,
                                      @RequestParam(value = "j_edt") String edt,
                                      Model model) throws java.text.ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar enddate = new GregorianCalendar();
-        Calendar startDate = new GregorianCalendar();
-        startDate.setTime(dateFormat.parse(sdt));
-        enddate.setTime(dateFormat.parse(edt));
-        enddate.add(Calendar.HOUR_OF_DAY, 24);
-        enddate.add(Calendar.SECOND, -1);
-
-        Subject subject = subjectService.findByName(sub);
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
-
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(dateFormat.parse(sdt));
-        dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-        List<String> headerCalendar = new LinkedList<>();
-        int st = startDate.getTime().getDate();
-        int en = enddate.getTime().getDate();
-
-
-        while (st <= en) {
-            String tmp = dateFormat.format(calendar.getTime());
-            headerCalendar.add(tmp);
-            calendar.add(Calendar.DAY_OF_WEEK, 1);
-            st++;
-        }
-        model.addAttribute("headerCalendar", headerCalendar);
-
-        List<Jurnal> jurnals = jurnalService.findByLoginSubject(user.getUsername(), startDate, enddate, subject);
-
-        String outtbl = "<tr>";
-
-        outtbl += "<td>" + subject.getName() + "</td>";
-        st = startDate.getTime().getDate();
-        en = enddate.getTime().getDate();
-        while (st <= en) {
-            outtbl += "<td>";
-            for (Jurnal jurnal : jurnals) {
-                for (MarkStamp markStamp : jurnal.getMarkStamps()) {
-                    if (jurnal.getSubject().equals(subject) && markStamp.getDate().getTime().getDate() == st) {
-                        outtbl += markStamp.getMark().toString();
-                    }
-                }
-            }
-            outtbl += "</td>";
-            st++;
-        }
-        outtbl += "</tr>";
-
-        model.addAttribute("jurtab", outtbl);
-
-
-        //Список предметов для отображения
-        List<Subject> subjects = subjectService.getAllSubjects();
-        Set<String> subject_list = new LinkedHashSet<>();
-        subject_list.add(sub);
-        subject_list.add("Все");
-        for (Subject s : subjects) {
-            subject_list.add(s.getName());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = format.parse(sdt);
+        Date endDate = format.parse(edt);
+        Subject subject = null;
+        if (subjectId!=null) {
+            subject=subjectService.findById(subjectId);
         }
 
-        model.addAttribute("subject", subject_list);
-        //Список предметов для отображения
-        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
-        model.addAttribute("end_date", dateFormat1.format(enddate.getTime()));
-        model.addAttribute("start_date", dateFormat1.format(startDate.getTime()));
-
-
-        return new ModelAndView("journal");
+        return list(subject,startDate,endDate,model);
     }
 }

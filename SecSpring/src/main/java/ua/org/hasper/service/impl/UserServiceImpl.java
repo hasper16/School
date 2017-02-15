@@ -1,6 +1,8 @@
 package ua.org.hasper.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.hasper.Entity.CustomUser;
@@ -31,6 +33,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<CustomUser> getUsersByRole(UserRole role) {
         return userRepository.findUsersbyRole(role);
+    }
+
+    @Override
+    @Transactional
+    public Page<CustomUser> getUsersByRole(UserRole role, int page,int pageSize) {
+        return userRepository.findUsersbyRole(role, new PageRequest(page,pageSize));
     }
 
     @Override

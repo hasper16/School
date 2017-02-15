@@ -1,15 +1,17 @@
 package ua.org.hasper;
 
-import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import ua.org.hasper.Entity.Enums.UserRole;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-public class WebInitializer implements WebApplicationInitializer {
+public class WebInitializer  extends AbstractAnnotationConfigDispatcherServletInitializer
+{
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
@@ -24,7 +26,7 @@ public class WebInitializer implements WebApplicationInitializer {
         servlet.setLoadOnStartup(1);
     }
 
-    /*@Override
+    @Override
     protected Class<?>[] getRootConfigClasses() {
         return  new Class<?>[] { AppConfig.class, SecurityConfig.class };
     }
@@ -37,14 +39,6 @@ public class WebInitializer implements WebApplicationInitializer {
     @Override
     protected String[] getServletMappings() {
         return new String[] { "/" };
-    }*/
+    }
 
-    /*@Override
-    protected Filter[] getServletFilters() {
-        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        characterEncodingFilter.setEncoding("UTF-8");
-
-        return new Filter[] { characterEncodingFilter, new DelegatingFilterProxy("springSecurityFilterChain"),
-                new OpenEntityManagerInViewFilter() };
-    }*/
 }

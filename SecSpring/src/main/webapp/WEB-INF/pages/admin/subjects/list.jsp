@@ -13,8 +13,8 @@
     <title>Список предметов</title>
 
 
-    <link rel="stylesheet" href="/css/bootstrap.css" type="text/css" media="screen">
-    <link rel="stylesheet" href="/css/layout.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="<c:url value="/css/bootstrap.css"/>" type="text/css" media="screen">
+    <link rel="stylesheet" href="<c:url value="/css/layout.css"/>" type="text/css" media="screen" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -23,10 +23,10 @@
     <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen" />
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <script src="/js/jquery-1.5.2.min.js" type="text/javascript"></script>
-    <script src="/js/hideshow.js" type="text/javascript"></script>
-    <script src="/js/jquery.tablesorter.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/js/jquery.equalHeight.js"></script>
+    <script src="<c:url value="/js/jquery-1.5.2.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/js/hideshow.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/js/jquery.tablesorter.min.js"/>" type="text/javascript"></script>
+    <script type="text/javascript" src="<c:url value="/js/jquery.equalHeight.js"/>"></script>
     <script type="text/javascript">
         $(document).ready(function()
                 {
@@ -67,15 +67,15 @@
 
 <header id="header">
     <hgroup>
-        <h1 class="site_title"><a href="/admin/">Учительская</a></h1>
-        <h2 class="section_title">School</h2><div class="btn_view_site"><a href="/">Открыть сайт</a></div>
+        <h1 class="site_title"><a href="<c:url value="/admin/"/>">Учительская</a></h1>
+        <h2 class="section_title">School</h2><div class="btn_view_site"><a href="<c:url value="/"/>">Открыть сайт</a></div>
     </hgroup>
 </header> <!-- end of header bar -->
 
 <section id="secondary_bar">
     <div class="user">
         <p>${login}</p>
-        <a class="logout_user" href="/logout"  title="Logout">Logout</a>
+        <a class="logout_user" href="<c:url value="/logout"/>"  title="Logout">Logout</a>
     </div>
     <!--<div class="breadcrumbs_container">
         <article class="breadcrumbs"><a href="./index.html">Учительская</a> <div class="breadcrumb_divider"></div> <a class="current">Dashboard</a></article>
@@ -86,70 +86,65 @@
 
     <h3>Расписание занятий</h3>
     <ul class="toggle">
-        <li class="icn_new_article active"><a href="/admin/timetable/add">Новое расписание</a></li>
-        <li class="icn_categories"><a href="/admin/timetable/list">Все расписания</a></li>
-        <li class="icn_new_article"><a href="/admin/subjects/add">Новый предмет</a></li>
-        <li class="icn_categories"><a href="/admin/subject/list">Все предметы</a></li>
-        <li class="icn_new_article"><a href="/admin/groups/add">Новый класс</a></li>
-        <li class="icn_categories"><a href="/admin/groups/list">Все классы</a></li>
+        <li class="icn_new_article active"><a href="<c:url value="/admin/timetable/add"/>">Новое расписание</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/timetable/list"/>">Все расписания</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/subjects/add"/>">Новый предмет</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/subjects/list"/>">Все предметы</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/groups/add"/>">Новый класс</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/groups/list"/>">Все классы</a></li>
     </ul>
     <h3>Пользователи</h3>
     <ul class="toggle">
-        <li class="icn_add_user"><a href="/admin/users/add">Добавить нового пользователя</a></li>
-        <li class="icn_view_users"><a href="/admin/users/list">Список пользователей</a></li>
+        <li class="icn_add_user"><a href="<c:url value="/admin/users/add"/>">Добавить нового пользователя</a></li>
+        <li class="icn_view_users"><a href="<c:url value="/admin/users/list"/>">Список пользователей</a></li>
     </ul>
     <h3>Домашние задания</h3>
     <ul class="toggle">
-        <li class="icn_new_article"><a href="/admin/homeworks/add">Новое задание</a></li>
-        <li class="icn_categories"><a href="/admin/homeworks/list">Все задания</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/homeworks/add"/>">Новое задание</a></li>
+        <li class="icn_categories"><a href="<c:url value="/admin/homeworks/list"/>">Все задания</a></li>
     </ul>
     <h3>Журнал оценок и посещений</h3>
     <ul class="toggle">
-        <li class="icn_new_article"><a href="/admin/journal/addMark">Новая оценка</a></li>
-        <li class="icn_folder"><a href="/admin/journal/journalList">Журнал</a></li>
+        <li class="icn_new_article"><a href="<c:url value="/admin/journal/addMark"/>">Новая оценка</a></li>
+        <li class="icn_folder"><a href="<c:url value="/admin/journal/journalList"/>">Журнал</a></li>
     </ul>
-    <h3>Отчеты</h3>
-    <ul class="toggle">
-        <li class="icn_categories"><a href="/admin/reports/progress">Успеваемость</a></li>
-        <li class="icn_categories"><a href="/admin/reports/visits">Посещения</a></li>
-        <li class="icn_categories"><a href="/admin/reports/studentsRating">Рейтинг учеников</a></li>
-    </ul>
-    <h3>Admin</h3>
-    <ul class="toggle">
-        <li class="icn_audio"><a href="#">Объявление</a></li>
-        <li class="icn_settings"><a href="#">Options</a></li>
-        <li class="icn_security"><a href="#">Security</a></li>
-        <li class="icn_jump_back"><a href="#">Logout</a></li>
-    </ul>
+    <div style="visibility: hidden;">
+        <h3>Отчеты</h3>
+        <ul class="toggle">
+            <li class="icn_categories"><a href="<c:url value="/admin/reports/progress"/>">Успеваемость</a></li>
+            <li class="icn_categories"><a href="<c:url value="/admin/reports/visits"/>">Посещения</a></li>
+            <li class="icn_categories"><a href="<c:url value="/admin/reports/studentsRating"/>">Рейтинг учеников</a></li>
+        </ul>
+        <h3>Admin</h3>
+        <ul class="toggle">
+            <li class="icn_audio"><a href="#">Объявление</a></li>
+            <li class="icn_settings"><a href="#">Options</a></li>
+            <li class="icn_security"><a href="#">Security</a></li>
+            <li class="icn_jump_back"><a href="#">Logout</a></li>
+        </ul>
+    </div>
 
     <footer>
         <hr />
         <p><strong>Copyright &copy; 2016 H@sper</strong></p>
     </footer>
-</aside><!-- end of sidebar -->
+</aside>
+<!-- end of sidebar -->
 
 
 <section id="main" class="column">
 
-    <script>
-        if(${alert}==1){
-
-            alert("Предмет ${message} удален")
-        }
-        else if(${alert}==2){
-            alert("Предмет ${message} изменен")
-        }
-    </script>
+    <%-- Notifications--%>
+    <c:if test="${alert == 1}"><h4 class="alert_success">${message}</h4></c:if>
+    <c:if test="${alert == 2}"><h4 class="alert_warning">${message}</h4></c:if>
+    <c:if test="${alert == 3}"><h4 class="alert_error">${message}</h4></c:if>
+    <c:if test="${alert == 4}"><h4 class="alert_info">${message}</h4></c:if>
+    <%-- Notifications--%>
 
     <article class="module width_full">
         <header><h3 class="tabs_involved">Список предметов</h3>
-            <ul class="tabs">
-                <li><a href="#tab1">Предметы</a></li>
-            </ul>
         </header>
 
-        <div class="tab_container">
-            <div id="tab1" class="tab_content">
                 <table class="tablesorter" cellspacing="0">
                     <thead>
                     <tr>
@@ -162,7 +157,7 @@
                     <c:forEach items="${subjects}" var="subject">
                         <tr>
                             <td><c:out value="${subject.name}"/></td>
-                            <td><input type="image" src="/images/icn_edit.png" data-toggle="modal" data-target="#modalSubjectEdit_${subject.id}" title="Редактировать"><a href="/subject/delete?id=${subject.id}"><img src="/images/icn_trash.png" title="Удалить"></a></td>
+                            <td><input type="image" src="<c:url value="/images/icn_edit.png"/>" data-toggle="modal" data-target="#modalSubjectEdit_${subject.id}" title="Редактировать"><a href="<c:url value="/subject/delete?id=${subject.id}"/>"><img src="<c:url value="/images/icn_trash.png"/>" title="Удалить"></a></td>
                         </tr>
 
 
@@ -178,12 +173,15 @@
                                     </div>
                                     <form name="edit_group" action="/subject/edit?id=${subject.id}" method="POST">
                                         <div class="modal-body">
-
-                                            <fieldset style="width:48%; float:left; margin-right: 3%;">
-                                                <label>Название</label>
-                                                <input type="text" style="width:92%;" name="j_subject" value="${subject.name}">
+                                            <fieldset style="width:48%; float:left; margin-right: 3%">
+                                                <div class="col-md-11">
+                                                    <div class="form-group">
+                                                        <label for="inputGroup">Название</label>
+                                                        <input class="form-control input-sm" id="inputGroup" type="text" name="j_subject"
+                                                               value="${subject.name}"/>
+                                                    </div>
+                                                </div>
                                             </fieldset>
-
                                         </div>
                                         <div class="clear"></div>
                                         <div class="modal-footer">
@@ -198,15 +196,50 @@
                     </c:forEach>
                     </tbody>
                 </table>
-            </div><!-- end of #tab1 -->
 
-        </div><!-- end of .tab_container -->
+
+            <!--Pages -->
+            <ul class="pagination">
+                <c:if test="${curPage == 0}">
+                    <li class="disabled"><a href="/admin/subjects/list?page=0">&laquo;</a></li>
+                </c:if>
+                <c:if test="${curPage > 0}">
+                    <li><a href="/admin/subjects/list?page=0">&laquo;</a></li>
+                </c:if>
+
+                <c:if test="${curPage <= 3}"><c:set var="begin" value="0"/></c:if>
+                <c:if test="${curPage > 3}"><c:set var="begin" value="${curPage-3}"/></c:if>
+
+                <c:forEach var="i" begin="${begin}" end="${totalPages}">
+                    <c:if test="${i <= curPage+3}">
+                        <c:if test="${curPage == i}">
+                            <li class="active"><a href="/admin/subjects/list?page=${i}"><c:out value="${i+1}"/>
+                                <span class="sr-only">(current)</span></a></li>
+                        </c:if>
+                        <c:if test="${curPage != i}">
+                            <li><a href="/admin/subjects/list?page=${i}"><c:out value="${i+1}"/> <span
+                                    class="sr-only">(current)</span></a></li>
+                        </c:if>
+                    </c:if>
+                </c:forEach>
+
+                <c:if test="${curPage == totalPages}">
+                    <li class="disabled"><a href="/admin/subjects/list?page=${totalPages}">&raquo;</a>
+                    </li>
+                </c:if>
+                <c:if test="${curPage < totalPages}">
+                    <li><a href="/admin/subjects/list?page=${totalPages}">&raquo;</a></li>
+                </c:if>
+            </ul>
+            <!--end Pages -->
 
     </article><!-- end of content manager article -->
 
 </section>
 
-
+<script src="/js/validator/jquery.min.js"></script>
+<script src="/js/validator/bootstrap.min.js"></script>
+<script src="/js/validator/common.js"></script>
 </body>
 
 </html>

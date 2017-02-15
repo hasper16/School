@@ -1,11 +1,7 @@
 package ua.org.hasper.Entity;
 
 
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,22 +19,27 @@ public class StudentsGroup {
     private String name;
 
     @OneToMany(mappedBy = "studentsGroup", cascade = CascadeType.ALL)
-    private List<Student> students = new LinkedList<>();
+    private List<Student> students;
+
+    @OneToMany(mappedBy = "studentsGroup", cascade = CascadeType.ALL)
+    private List<Schedule> schedules;
+
+/*    @OneToMany(mappedBy = "studentsGroup",  cascade = CascadeType.ALL)
+    private List<HomeWork> homeWorks;*/
+
+
+    public StudentsGroup(String name) {
+        this.name = name;
+        students = new LinkedList<>();
+        schedules = new LinkedList<>();
+        /*homeWorks = new LinkedList<>();*/
+    }
 
     public StudentsGroup() {
     }
 
-    public StudentsGroup(String name) {
-        this.name = name;
-        students.iterator();
-    }
-
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -49,6 +50,7 @@ public class StudentsGroup {
         this.name = name;
     }
 
+
     public void addStudent(Student student) {
         students.add(student);
         student.setStudentsGroup(this);
@@ -58,7 +60,28 @@ public class StudentsGroup {
         return students;
     }
 
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
 
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
 
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
+
+    public void addSchedule(Schedule schedule) {
+        schedules.add(schedule);
+
+    }
 }
+   /* public List<HomeWork> getHomeWorks() {
+        return homeWorks;
+    }
 
+    public void setHomeWorks(List<HomeWork> homeWorks) {
+        this.homeWorks = homeWorks;
+    }
+}*/

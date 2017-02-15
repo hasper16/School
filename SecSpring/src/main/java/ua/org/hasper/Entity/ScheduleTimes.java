@@ -21,7 +21,7 @@ public class ScheduleTimes {
     private Calendar sdt;
     private int durationMin;
 
-    @OneToMany(mappedBy = "scheduleTimes")
+    @OneToMany(mappedBy = "scheduleTimes", cascade = CascadeType.ALL)
     private List<Schedule> schedules = new LinkedList<>();
 
     public ScheduleTimes() {
@@ -77,7 +77,4 @@ public class ScheduleTimes {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 }

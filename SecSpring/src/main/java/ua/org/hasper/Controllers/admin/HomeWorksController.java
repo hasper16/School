@@ -1,6 +1,7 @@
 package ua.org.hasper.Controllers.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,9 @@ public class HomeWorksController {
     @Autowired
     private HomeWorkStudentStatusService homeWorkStudentStatusService;
 
+    int PAGESIZE = 25;
+    int curPage = 0;
+
     @RequestMapping("admin/homeworks/add")
     public ModelAndView add(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -58,14 +62,40 @@ public class HomeWorksController {
                                     @RequestParam(value = "j_teacher") int teacherId,
                                     @RequestParam(value = "j_description") String description,
                                     Model model) {
+        int alert = 0;
+        String message = "";
         StudentsGroup studentsGroup = groupService.getGroupById(groupId);
         Subject subject = subjectService.findById(subjectId);
         Teacher teacher = teacherService.findById(teacherId);
-
-        HomeWork homeWork = new HomeWork(new GregorianCalendar(), studentsGroup, teacher, subject, description);
-        homeWorkService.addOrUpdateHomeWork(homeWork);
-
-        model.addAttribute("addStatus", 1);
+        try {
+            List<HomeWork> worksDublicat = homeWorkService.findAll();
+            for (HomeWork work :
+                    worksDublicat) {
+                if (work.getStudentsGroup().equals(studentsGroup) &&
+                        work.getSubject().equals(subject) &&
+                        work.getTeacher().equals(teacher) &&
+                        work.getDescription().equals(description)) {
+                    alert = 2;
+                    message = "Такое задание уже существует";
+                }
+            }
+            if (alert != 2) {
+                HomeWork homeWork = new HomeWork(new GregorianCalendar(), studentsGroup, teacher, subject, description);
+                homeWorkService.addOrUpdateHomeWork(homeWork);
+                alert = 1;
+                message = "Задание " + homeWork.getStudentsGroup().getName()
+                        + " " + homeWork.getSubject().getName()
+                        + " " + homeWork.getTeacher().getName()
+                        + " " + homeWork.getTeacher().getSurname()
+                        + " " + homeWork.getDescription().substring(0, 10)
+                        + "... успешно добавлено";
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
+        model.addAttribute("alert", alert);
+        model.addAttribute("message", message);
 
         return add(model);
     }
@@ -73,46 +103,57 @@ public class HomeWorksController {
 
     @RequestMapping("admin/homeworks/list")
     public ModelAndView list(Model model) {
+        return listPage(0, model);
+    }
+
+    @RequestMapping(value = "admin/homeworks/list", params = {"page"})
+    public ModelAndView listPage(@RequestParam(value = "page") int page, Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
 
-        List<HomeWork> homeWorks = homeWorkService.findAll();
+        Page<HomeWork> homeWorkPage = homeWorkService.findAll(page, PAGESIZE);
+        curPage = page;
+        int totalPages = homeWorkPage.getTotalPages() - 1;
+        List<HomeWork> homeWorks = homeWorkPage.getContent();
         List<Subject> subjects = subjectService.getAllSubjects();
         List<StudentsGroup> studentsGroups = groupService.getAllGroups();
         List<Teacher> teachers = teacherService.getAllTeachers();
 
-        model.addAttribute("homeWorks",homeWorks);
+        model.addAttribute("homeWorks", homeWorks);
         model.addAttribute("subjects", subjects);
         model.addAttribute("groups", studentsGroups);
         model.addAttribute("teachers", teachers);
+        model.addAttribute("curPage", curPage);
+        model.addAttribute("totalPages", totalPages);
 
         return new ModelAndView("admin/homeworks/list");
     }
 
     @RequestMapping("/homeWork/delete")
     public ModelAndView deleteSchedule(@RequestParam(value = "id") int id, Model model) {
+        int alert = 0;
+        String message = "";
         HomeWork homeWork = homeWorkService.findById(id);
-
-        String message = homeWork.getStrDate();
-        message+=" "+homeWork.getStudentsGroup().getName();
-        message+=" "+homeWork.getSubject().getName();
-        message+=" "+homeWork.getTeacher().getName()+" "+homeWork.getTeacher().getSurname();
-        message+=" "+homeWork.getDescription();
-
-        List<HomeWorkStudentStatus> homeWorkStudentStatuses = homeWork.getHomeWorkStudentStatuses();
-
-        for (HomeWorkStudentStatus hs:
-             homeWorkStudentStatuses) {
-            homeWorkStudentStatusService.delHomeWorkStudentStatus(hs);
+        try {
+            homeWorkService.delHomeWork(homeWork);
+            alert = 1;
+            message = "Задание " + homeWork.getStudentsGroup().getName()
+                    + " " + homeWork.getSubject().getName()
+                    + " " + homeWork.getTeacher().getName()
+                    + " " + homeWork.getTeacher().getSurname()
+                    + " " + homeWork.getDescription().substring(0, 10)
+                    + "... успешно удалено";
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
         }
 
-        homeWorkService.delHomeWork(homeWork);
 
         model.addAttribute("message", message);
-        model.addAttribute("alert", 1);
+        model.addAttribute("alert", alert);
 
 
-        return list(model);
+        return listPage(curPage, model);
 
     }
 
@@ -122,29 +163,50 @@ public class HomeWorksController {
                                     @RequestParam(value = "j_group") int groupId,
                                     @RequestParam(value = "j_teacher") int teacherId,
                                     @RequestParam(value = "j_description") String description,
-                                    Model model){
+                                    Model model) {
+        int alert = 0;
+        String message = "";
         HomeWork homeWork = homeWorkService.findById(id);
 
-        Subject subject=subjectService.findById(subjectId);
+        Subject subject = subjectService.findById(subjectId);
         StudentsGroup studentsGroup = groupService.getGroupById(groupId);
         Teacher teacher = teacherService.findById(teacherId);
 
-        homeWork.setSubject(subject);
-        homeWork.setStudentsGroup(studentsGroup);
-        homeWork.setTeacher(teacher);
-        homeWork.setDescription(description);
-
-        String message = homeWork.getStrDate();
-        message+=" "+homeWork.getStudentsGroup().getName();
-        message+=" "+homeWork.getSubject().getName();
-        message+=" "+homeWork.getTeacher().getName()+" "+homeWork.getTeacher().getSurname();
-        message+=" "+homeWork.getDescription();
-
+        try {
+            List<HomeWork> worksDublicat = homeWorkService.findAll();
+            for (HomeWork work :
+                    worksDublicat) {
+                if (work.getStudentsGroup().equals(studentsGroup) &&
+                        work.getSubject().equals(subject) &&
+                        work.getTeacher().equals(teacher) &&
+                        work.getDescription().equals(description) &&
+                        work.getId() != homeWork.getId()) {
+                    alert = 2;
+                    message = "Такое задание уже существует";
+                }
+            }
+            if (alert != 2) {
+                homeWork.setSubject(subject);
+                homeWork.setStudentsGroup(studentsGroup);
+                homeWork.setTeacher(teacher);
+                homeWork.setDescription(description);
+                homeWorkService.addOrUpdateHomeWork(homeWork);
+                alert = 1;
+                message = "Задание " + homeWork.getStudentsGroup().getName()
+                        + " " + homeWork.getSubject().getName()
+                        + " " + homeWork.getTeacher().getName()
+                        + " " + homeWork.getTeacher().getSurname()
+                        + " " + homeWork.getDescription().substring(0, 10)
+                        + "... успешно изменено";
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
+        model.addAttribute("alert", alert);
         model.addAttribute("message", message);
-        model.addAttribute("alert", 2);
 
-
-        return list(model);
+        return listPage(curPage, model);
 
     }
 }

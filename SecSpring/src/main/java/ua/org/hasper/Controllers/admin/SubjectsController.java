@@ -1,6 +1,7 @@
 package ua.org.hasper.Controllers.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -9,9 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import ua.org.hasper.Entity.HomeWork;
-import ua.org.hasper.Entity.Jurnal;
-import ua.org.hasper.Entity.Schedule;
 import ua.org.hasper.Entity.Subject;
 import ua.org.hasper.service.HomeWorkService;
 import ua.org.hasper.service.JurnalService;
@@ -35,6 +33,9 @@ public class SubjectsController {
     @Autowired
     ScheduleService scheduleService;
 
+    int PAGESIZE = 25;
+    int curPage = 0;
+
     @RequestMapping("admin/subjects/add")
     public ModelAndView add(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -45,97 +46,109 @@ public class SubjectsController {
 
     @RequestMapping(value = "admin/subjects/add", method = RequestMethod.POST)
     public ModelAndView newSubject(@RequestParam(value = "j_subject") String subjectHtml,
-                                 Model model)  {
-        Subject subject = new Subject(subjectHtml);
-        subjectService.addOrUpdateSubject(subject);
+                                   Model model) {
+        int alert = 0;
+        String message = "";
+        try {
+            if (subjectService.findByName(subjectHtml) != null) {
+                alert = 2;
+                message = "Предмет с таким названием уже существует";
+                model.addAttribute("j_subject",subjectHtml);
+            } else {
+                Subject subject = new Subject(subjectHtml);
+                subjectService.addOrUpdateSubject(subject);
+                alert = 1;
+                message = "Предмет " + subject.getName() + " успешно добавлен";
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
-        model.addAttribute("addStatus", 1);
+        model.addAttribute("alert", alert);
+        model.addAttribute("message", message);
 
         return new ModelAndView("admin/subjects/add");
     }
 
     @RequestMapping("admin/subjects/list")
-    public void list(Model model) {
+    public ModelAndView list(Model model) {
+        return listFilter(0, model);
+    }
+
+    @RequestMapping(value = "admin/subjects/list", params = {"page"})
+    public ModelAndView listFilter(@RequestParam(value = "page") int page, Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
 
-        List<Subject> subjects = subjectService.getAllSubjects();
+        Page<Subject> subjectPage = subjectService.getAllSubjects(page, PAGESIZE);
+        List<Subject> subjects = subjectPage.getContent();
+        curPage = page;
+        int totalPages = subjectPage.getTotalPages() - 1;
 
+        model.addAttribute("subjects", subjects);
+        model.addAttribute("curPage", curPage);
+        model.addAttribute("totalPages", totalPages);
 
-        model.addAttribute("subjects",subjects);
-
+        return new ModelAndView("admin/subjects/list");
     }
 
     @RequestMapping("/subject/delete")
-    public ModelAndView deleteSubject(@RequestParam(value="id") int id, Model model) {
+    public ModelAndView deleteSubject(@RequestParam(value = "id") int id, Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
 
 
-        String message ;
+        String message = "";
+        int alert = 0;
         Subject subject = subjectService.findById(id);
-        List<HomeWork>homeWorks = homeWorkService.findBySubject(subject);
-        List<Jurnal>jurnals=jurnalService.findBySubject(subject);
-        List<Schedule>schedules=scheduleService.findBySubject(subject);
 
-
-        for (HomeWork h:
-                homeWorks) {
-            h.setSubject(null);
-            homeWorkService.addOrUpdateHomeWork(h);
+        try {
+            subjectService.delSubject(subject);
+            message = "Предмент " + subject.getName() + " успешно удален";
+            alert = 1;
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
         }
 
-        for (Jurnal j:
-                jurnals) {
-            jurnalService.delJurnal(j);
-        }
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        for (Schedule s:
-                schedules) {
-            scheduleService.delSchedule(s);
-        }
-
-
-
-
-        message=subject.getName();
-        subjectService.delSubject(subject);
-
-        List<Subject> studentsGroups = subjectService.getAllSubjects();
-        model.addAttribute("subjects",studentsGroups);
-
-
-        model.addAttribute("message",message);
-        model.addAttribute("alert",1);
-
-        return new ModelAndView("admin/subjects/list");
-
+        return listFilter(curPage, model);
     }
 
 
     @RequestMapping("/subject/edit")
-    public ModelAndView editSubject(@RequestParam(value="id") int id,
+    public ModelAndView editSubject(@RequestParam(value = "id") int id,
                                     @RequestParam(value = "j_subject") String subjectName,
-                                    Model model)  {
-        Subject subject = subjectService.findById(id);
-        subject.setName(subjectName);
-        subjectService.addOrUpdateSubject(subject);
+                                    Model model) {
+        int alert = 0;
+        String message = "";
 
+        try {
+            List<Subject> dublicat = subjectService.findByName(subjectName);
+            Subject subject = subjectService.findById(id);
+            if (dublicat.size()>=1 && !dublicat.contains(subject)) {
+                alert = 2;
+                message = "Предмет с таким названием уже существует";
+            } else {
+                subject.setName(subjectName);
+                subjectService.addOrUpdateSubject(subject);
+                alert = 1;
+                message = "Предмет " + subject.getName() + " успешно изменен";
+            }
+        } catch (Exception e) {
+            alert = 3;
+            message = "Ошибка (" + e.getMessage() + ")";
+        }
 
-        String message ;
-        message=subject.getName();
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("login", user.getUsername());
+        model.addAttribute("message", message);
+        model.addAttribute("alert", alert);
 
-        model.addAttribute("message",message);
-        model.addAttribute("alert",2);
-
-        List<Subject> studentsGroups = subjectService.getAllSubjects();
-        model.addAttribute("subjects",studentsGroups);
-
-        return new ModelAndView("admin/subjects/list");
+        return list(model);
 
     }
 

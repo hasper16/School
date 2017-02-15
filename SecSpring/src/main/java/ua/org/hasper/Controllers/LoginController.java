@@ -17,6 +17,7 @@ public class LoginController {
     public String unauthorized(Model model){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
+
         return "unauthorized";
     }
 
