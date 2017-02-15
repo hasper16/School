@@ -63,8 +63,8 @@ public class Test extends Thread{
 
     public void run() {
         try {
-            //addJournals(2,weekDayName);
-            addHomeWorks(2,weekDayName);
+            addJournals(1,weekDayName);
+            addHomeWorks(1,weekDayName);
         } catch (ParseException e) {
             System.out.println("Parse date exception in Test Create Schedule ---- " + e.getLocalizedMessage());
         }
@@ -80,9 +80,9 @@ public class Test extends Thread{
     }
 
     public void addGroups() {
-        char[] groupChar = {'А', 'Б', 'В', 'Г'};
+        char[] groupChar = {'А', 'Б'};
         List<StudentsGroup> studentsGroups = new LinkedList<>();
-        for (int i = 1; i <= 12; i++) {
+        for (int i = 1; i <= 11; i++) {
             for (char aGroupChar : groupChar) {
                 String str = Integer.toString(i) + "-" + aGroupChar;
                 studentsGroups.add(new StudentsGroup(str));

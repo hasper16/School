@@ -38,29 +38,29 @@ public class Application {
             @Override
             public void run(String... strings) throws Exception {
 
-               /* File file = new File("src/main/webapp/images/default_avatar.png");
+                /*File file = new File("src/main/webapp/images/default_avatar.png");
                 FileInputStream fileInputStream = new FileInputStream(file);
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
                 byte []image = new byte[bufferedInputStream.available()];
                 bufferedInputStream.read(image,0,bufferedInputStream.available());
 
                 Photo default_photo = new Photo("default_avatar.png",image);
-                photoService.add(default_photo);*/
+                photoService.add(default_photo);
 
-               /*Test test = new Test(groupService,studentService,userService,
+               Test test = new Test(groupService,studentService,userService,
                        teacherService,subjectService,scheduleTimesService,scheduleService,
-                       jurnalService,markStampService,homeWorkService,homeWorkStudentStatusService,photoService);*/
+                       jurnalService,markStampService,homeWorkService,homeWorkStudentStatusService,photoService,null);
 
-       /*         test.addGroups();
-                test.addStudents(480);
-                test.addTeachers(48);
+                test.addGroups();
+           *//*     test.addStudents(220);
+                test.addTeachers(24);
                 test.addSubjects();
                 test.addScheduleTimes();
-                test.addSchedules(4);
+                test.addSchedules(4);*//*
                 test.addUser("admin", UserRole.ROLE_ADMIN);
-                test.addStudent("Павел","Еременко","student");*/
-
-                /*Test sundayTest = new Test(groupService, studentService, userService,
+                test.addStudent("Павел","Еременко","student");
+*/
+              /*  Test sundayTest = new Test(groupService, studentService, userService,
                         teacherService, subjectService, scheduleTimesService, scheduleService,
                         jurnalService, markStampService, homeWorkService, homeWorkStudentStatusService, photoService, WeekDayName.Sunday);
                 Test mondayTest = new Test(groupService, studentService, userService,
@@ -88,8 +88,8 @@ public class Application {
                 wendnesdayTest.start();
                 thursdayTest.start();
                 fridayTest.start();
-                saturdayTest.start();*/
-
+                saturdayTest.start();
+*/
             }
         };
     }
