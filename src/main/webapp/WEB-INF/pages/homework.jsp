@@ -72,10 +72,10 @@
     <div class="input-group input-group-sm">
         <span class="input-group-addon">Предмет</span>
                     <select class="form-control" name="j_subject">
-                        <option value="${subject.id}"><c:out value="${subject.name}"/></option>
+                        <option value="${curSubject.id}"><c:out value="${curSubject.name}"/></option>
                         <c:forEach items="${subjects}" var="sub">
-                            <c:if test="${subject.id != sub.id}">
-                            <option value="${sub.id}"><c:out value="${sub.name}"/></option>
+                            <c:if test="${curSubject.id != sub.id}">
+                                <option value="${sub.id}"><c:out value="${sub.name}"/></option>
                             </c:if>
                         </c:forEach>
                     </select>

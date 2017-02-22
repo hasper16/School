@@ -90,12 +90,10 @@ public class HomeWorkController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("login", user.getUsername());
         Student student = studentService.getStudentByLogin(user.getUsername());
-        List<Subject> subjects;
-        if (subject == null) {
-            subjects = subjectService.getAllSubjects();
-        } else {
-            subjects = new LinkedList<>();
-            subjects.add(subject);
+        List<Subject> subjects= subjectService.getAllSubjects();
+        if (subject!= null) {
+            subjects.add(0, null);
+            model.addAttribute("curSubject", subject);
         }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
