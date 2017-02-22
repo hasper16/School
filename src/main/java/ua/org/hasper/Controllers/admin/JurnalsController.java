@@ -158,7 +158,7 @@ public class JurnalsController {
         model.addAttribute("selectGroup", groupId);
         model.addAttribute("type", curMarkType);
         model.addAttribute("curPage", curPage);
-        model.addAttribute("totalPages", totalPages - 1);
+        model.addAttribute("totalPages", totalPages);
         return new ModelAndView("admin/journal/journalList");
     }
 

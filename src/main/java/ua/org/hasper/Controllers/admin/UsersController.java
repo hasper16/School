@@ -162,7 +162,7 @@ public class UsersController {
 
         Page<Student> studentPage = studentService.getAllStudents(page, PAGESIZE);
         curPage = page;
-        int totalPages = studentPage.getTotalPages() - 1;
+        int totalPages = studentPage.getTotalPages();
         List<Student> students = studentPage.getContent();
         List<StudentsGroup> studentsGroups = groupService.getAllGroups();
 
@@ -181,7 +181,7 @@ public class UsersController {
 
         Page<CustomUser> userPage = userService.getUsersByRole(UserRole.ROLE_ADMIN, page, PAGESIZE);
         curPage = page;
-        int totalPages = userPage.getTotalPages() - 1;
+        int totalPages = userPage.getTotalPages();
         List<CustomUser> customUsers = userPage.getContent();
 
         model.addAttribute("admins", customUsers);

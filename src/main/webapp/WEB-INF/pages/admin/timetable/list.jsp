@@ -324,6 +324,7 @@
             </table>
         </div><!-- end of .tab_container -->
 
+
         <!--Pages -->
         <ul class="pagination">
             <c:if test="${curPage == 0}">
@@ -333,13 +334,16 @@
                 <li><a href="/schedule/?weekDay=${curWeekDay}&page=0">&laquo;</a></li>
             </c:if>
 
-            <c:if test="${curPage <= 3}"><c:set var="begin" value="0"/></c:if>
-            <c:if test="${curPage > 3}"><c:set var="begin" value="${curPage-3}"/></c:if>
+            <c:if test="${curPage <= 2}"><c:set var="begin" value="0"/></c:if>
+            <c:if test="${curPage > 2}"><c:set var="begin" value="${curPage-2}"/></c:if>
+            <c:if test="${totalPages == 0}"><c:set var="end" value="0"/></c:if>
+            <c:if test="${totalPages > 0}"><c:set var="end" value="${totalPages-1}"/></c:if>
 
-            <c:forEach var="i" begin="${begin}" end="${maxCountScheduleRows}">
-                <c:if test="${i <= curPage+3}">
+            <c:forEach var="i" begin="${begin}" end="${end}">
+                <c:if test="${i <= curPage+2}">
                     <c:if test="${curPage == i}">
-                        <li class="active"><a href="/schedule/?weekDay=${curWeekDay}&page=${i}"><c:out value="${i+1}"/>
+                        <li class="active"><a href="/schedule/?weekDay=${curWeekDay}&page=${i}"><c:out
+                                value="${i+1}"/>
                             <span class="sr-only">(current)</span></a></li>
                     </c:if>
                     <c:if test="${curPage != i}">
@@ -349,16 +353,15 @@
                 </c:if>
             </c:forEach>
 
-            <c:if test="${curPage == maxCountScheduleRows}">
-                <li class="disabled"><a href="/schedule/?weekDay=${curWeekDay}&page=${maxCountScheduleRows}">&raquo;</a>
+            <c:if test="${curPage == totalPages}">
+                <li class="disabled"><a href="/schedule/?weekDay=${curWeekDay}&page=${totalPages-1}">&raquo;</a>
                 </li>
             </c:if>
-            <c:if test="${curPage < maxCountScheduleRows}">
-                <li><a href="/schedule/?weekDay=${curWeekDay}&page=${maxCountScheduleRows}">&raquo;</a></li>
+            <c:if test="${curPage < totalPages}">
+                <li><a href="/schedule/?weekDay=${curWeekDay}&page=${totalPages-1}">&raquo;</a></li>
             </c:if>
         </ul>
         <!--end Pages -->
-
     </article><!-- end of content manager article -->
 
 </section>

@@ -112,7 +112,7 @@ public class HomeWorksController {
 
         Page<HomeWork> homeWorkPage = homeWorkService.findAll(page, PAGESIZE);
         curPage = page;
-        int totalPages = homeWorkPage.getTotalPages() - 1;
+        int totalPages = homeWorkPage.getTotalPages();
         List<HomeWork> homeWorks = homeWorkPage.getContent();
         List<Subject> subjects = subjectService.getAllSubjects();
         List<StudentsGroup> studentsGroups = groupService.getAllGroups();

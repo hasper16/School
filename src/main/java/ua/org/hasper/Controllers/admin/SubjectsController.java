@@ -82,7 +82,7 @@ public class SubjectsController {
         Page<Subject> subjectPage = subjectService.getAllSubjects(page, PAGESIZE);
         List<Subject> subjects = subjectPage.getContent();
         curPage = page;
-        int totalPages = subjectPage.getTotalPages() - 1;
+        int totalPages = subjectPage.getTotalPages();
 
         model.addAttribute("subjects", subjects);
         model.addAttribute("curPage", curPage);

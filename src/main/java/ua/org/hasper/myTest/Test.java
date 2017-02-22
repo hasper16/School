@@ -297,7 +297,7 @@ public class Test extends Thread {
                     }
                 }
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(75);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

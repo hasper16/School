@@ -285,6 +285,7 @@
                 </c:forEach>
                 </tbody>
             </table>
+
             <!--Pages -->
             <ul class="pagination">
                 <c:if test="${curPage == 0}">
@@ -294,13 +295,16 @@
                     <li><a href="/admin/users/teachers?page=0">&laquo;</a></li>
                 </c:if>
 
-                <c:if test="${curPage <= 3}"><c:set var="begin" value="0"/></c:if>
-                <c:if test="${curPage > 3}"><c:set var="begin" value="${curPage-3}"/></c:if>
+                <c:if test="${curPage <= 2}"><c:set var="begin" value="0"/></c:if>
+                <c:if test="${curPage > 2}"><c:set var="begin" value="${curPage-2}"/></c:if>
+                <c:if test="${totalPages == 0}"><c:set var="end" value="0"/></c:if>
+                <c:if test="${totalPages > 0}"><c:set var="end" value="${totalPages-1}"/></c:if>
 
-                <c:forEach var="i" begin="${begin}" end="${totalPages}">
-                    <c:if test="${i <= curPage+3}">
+                <c:forEach var="i" begin="${begin}" end="${end}">
+                    <c:if test="${i <= curPage+2}">
                         <c:if test="${curPage == i}">
-                            <li class="active"><a href="/admin/users/teachers?page=${i}"><c:out value="${i+1}"/>
+                            <li class="active"><a href="/admin/users/teachers?page=${i}"><c:out
+                                    value="${i+1}"/>
                                 <span class="sr-only">(current)</span></a></li>
                         </c:if>
                         <c:if test="${curPage != i}">
@@ -311,11 +315,11 @@
                 </c:forEach>
 
                 <c:if test="${curPage == totalPages}">
-                    <li class="disabled"><a href="/admin/users/teachers?page=${totalPages}">&raquo;</a>
+                    <li class="disabled"><a href="/admin/users/teachers?page=${totalPages-1}">&raquo;</a>
                     </li>
                 </c:if>
                 <c:if test="${curPage < totalPages}">
-                    <li><a href="/admin/users/teachers?page=${totalPages}">&raquo;</a></li>
+                    <li><a href="/admin/users/teachers?page=${totalPages-1}">&raquo;</a></li>
                 </c:if>
             </ul>
             <!--end Pages -->

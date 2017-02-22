@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import ua.org.hasper.Entity.Enums.UserRole;
 import ua.org.hasper.Entity.Enums.WeekDayName;
+import ua.org.hasper.Entity.HomeWork;
 import ua.org.hasper.Entity.Photo;
 import ua.org.hasper.myTest.Test;
 import ua.org.hasper.service.*;
@@ -13,6 +14,7 @@ import ua.org.hasper.service.*;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 
 @SpringBootApplication
 public class Application {
@@ -38,8 +40,9 @@ public class Application {
             @Override
             public void run(String... strings) throws Exception {
 
+                int trig = 0;
                 if (userService.getUserByLogin("admin") == null) {
-                    File file = new File("src/main/webapp/images/default_avatar.png"); //"images/default_avatar.png"
+                    File file = new File("images/default_avatar.png"); //"images/default_avatar.png"
                     FileInputStream fileInputStream = new FileInputStream(file);
                     BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
                     byte[] image = new byte[bufferedInputStream.available()];
@@ -91,8 +94,14 @@ public class Application {
                     saturday.start();
                     sunday.start();
                     Thread.sleep(86400000);
+                    trig=1;
                 }
+
                 while (1 < 2) {
+                    if(trig==0){
+                        Thread.sleep(86400000);
+                        trig=1;
+                    }
                     Test realTimeTest = new Test(groupService, studentService, userService,
                             teacherService, subjectService, scheduleTimesService, scheduleService,
                             jurnalService, homeWorkService, photoService, null);

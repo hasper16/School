@@ -122,7 +122,7 @@ public class HomeWorkController {
             }
 
         }
-        totalPages = homeWorkStudentStatusPage.getTotalPages() - 1;
+        totalPages = homeWorkStudentStatusPage.getTotalPages();
         homeWorkStudentStatuses = homeWorkStudentStatusPage.getContent();
 
         model.addAttribute("homeworks", homeWorkStudentStatuses);

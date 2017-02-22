@@ -85,7 +85,7 @@ public class GroupsController {
         Page<StudentsGroup> groupPage = groupService.getAllGroups(page, PAGESIZE);
         studentsGroups = groupPage.getContent();
         curPage = page;
-        int totalPages = groupPage.getTotalPages() - 1;
+        int totalPages = groupPage.getTotalPages();
 
         model.addAttribute("groups", studentsGroups);
         model.addAttribute("curPage", curPage);

@@ -76,9 +76,11 @@ public class TimeController {
         curPage = page;
 
         Page<ScheduleTimes> scheduleTimesPage = scheduleTimesService.getAll(curPage, PAGESIZE);
-        int totalPages = scheduleTimesPage.getTotalPages() - 1;
+        int totalPages = scheduleTimesPage.getTotalPages();
         List<ScheduleTimes> scheduleTimes = scheduleTimesPage.getContent();
         model.addAttribute("scheduleTimes", scheduleTimes);
+        model.addAttribute("curPage", curPage);
+        model.addAttribute("totalPages", totalPages);
 
         return new ModelAndView("admin/times/list");
     }

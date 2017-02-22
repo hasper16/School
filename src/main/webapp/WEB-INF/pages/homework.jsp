@@ -163,8 +163,10 @@
 
                     <c:if test="${curPage <= 2}"><c:set var="begin" value="0"/></c:if>
                     <c:if test="${curPage > 2}"><c:set var="begin" value="${curPage-2}"/></c:if>
+                    <c:if test="${totalPages == 0}"><c:set var="end" value="0"/></c:if>
+                    <c:if test="${totalPages > 0}"><c:set var="end" value="${totalPages-1}"/></c:if>
 
-                    <c:forEach var="i" begin="${begin}" end="${totalPages}">
+                    <c:forEach var="i" begin="${begin}" end="${end}">
                         <c:if test="${i <= curPage+2}">
                             <c:if test="${curPage == i}">
                                 <li class="active"><a href="/homework_?page=${i}"><c:out
@@ -179,11 +181,11 @@
                     </c:forEach>
 
                     <c:if test="${curPage == totalPages}">
-                        <li class="disabled"><a href="/homework_?page=${totalPages}">&raquo;</a>
+                        <li class="disabled"><a href="/homework_?page=${totalPages-1}">&raquo;</a>
                         </li>
                     </c:if>
                     <c:if test="${curPage < totalPages}">
-                        <li><a href="/homework_?page=${totalPages}">&raquo;</a></li>
+                        <li><a href="/homework_?page=${totalPages-1}">&raquo;</a></li>
                     </c:if>
                 </ul>
                 <!--end Pages -->
